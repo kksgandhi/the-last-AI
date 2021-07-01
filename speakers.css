@@ -1,0 +1,11 @@
+/* The default stylesheets are based on solarized. I suggest using colors from the solarized pallet for the speaker colors. */
+/* https://en.wikipedia.org/wiki/Solarized_(color_scheme) */
+/* https://thomasf.github.io/solarized-css/ */
+
+.inim {
+    color: #dc322f;
+}
+
+p, a {
+        font-size: 24;
+}
