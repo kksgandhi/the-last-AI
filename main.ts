@@ -29,6 +29,8 @@ type passages = {
     [passageTitle: string]: passage
 }
 
+let delay = baseDelay;
+
 // given a string passageName, get the appropriate passage
 let getPassage = (passageName: string) => {
     if (passageName in passages) return passages[passageName];
@@ -138,15 +140,15 @@ let renderPassageTypewriter = async (passage: passage) => {
                 let character = characters[charidx];
                 // if the character was a comma wait a bit
                 if (character === ",") 
-                    await sleep(commaDelay);
+                    await sleep(delayComma * delay);
                 // if the character was other punctuation, wait a bit longer
                 if (".:;!?-".split('').includes(character))
-                    await sleep(periodDelay);
+                    await sleep(delayPunctuation * delay);
                 // wait between characters
-                await sleep(timeBetweenLetters);
+                await sleep(delay);
             }
             // wait between speakers
-            await sleep(timeBetweenSpeakers);
+            await sleep(delay * delayBetweenSpeakers);
             scrollToBottom();
         }
     }
@@ -220,5 +222,28 @@ To silence this message, set "debug = false" in configuration.js or add ignoreDe
 
 validatePassages();
 
-let increaseSpeed = () => timeBetweenLetters = timeBetweenLetters > 0 ? timeBetweenLetters - 1 : 0;
-let decreaseSpeed = () => timeBetweenLetters++;
+let textSpeedSlider = (document.getElementById("textSpeedSlider")! as HTMLInputElement);
+textSpeedSlider.oninput = () => {
+    // 1000 minus the value, that way higher values are faster
+    let x = (1000 - parseInt(textSpeedSlider.value));
+    // Make the slider non-linear, to allow players to really slow it down
+    delay = baseDelay * (x ** 2) / 250000;
+    console.log(`New text delay ${delay}`);
+}
+
+let colorSchemeChanger = document.getElementById("colorSchemeChanger")!;
+let swapColorScheme = () => {
+    let cssElement = document.getElementById("colorSchemeCSS")!;
+    // what is the current theme, aka what css file is the main css pointing at?
+    let curTheme = cssElement.getAttribute("href")!;
+    // depending, decide on the new color changer icon and the new main css file
+    let newTheme = curTheme === "solarized-dark.css" ? "solarized-light.css" : "solarized-dark.css";
+    let newImg = curTheme === "solarized-dark.css" ? "imgs/moon-black.png" : "imgs/sun-warm.png";
+    // Actually set the values
+    cssElement.setAttribute("href", newTheme);
+    colorSchemeChanger.setAttribute("src", newImg);
+}
+colorSchemeChanger.onclick = swapColorScheme;
+if (defaultColorScheme === "light") swapColorScheme();
+
+document.title = title;
