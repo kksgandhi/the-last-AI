@@ -1,11 +1,14 @@
 enum State {
     none,
     utilitarian,
-    deontologist
+    deontologist,
+        hesitant,
 };
 
 let state = State.none;
 let seenPhiloSpiel = false;
+let pulledLever = false;
+let seenDDE = false;
 
 let passages: passages = {
     "empty": {
@@ -83,7 +86,7 @@ let passages: passages = {
             { speaker: "inim", text: "There's a lot of tough questions in the world. How can you buy coffee beans if there might be children forced to work on the farms that make that coffee? How can you buy nice shoes, if that money could be better spent cleaning up a natural disaster? How can you do anything in a world as complex as this one?" },
             { speaker: "dask", text: "The humans are hoping that you will be able to guide humanity, with your ability to learn, and all your vast computing resources. Maybe one day you'll write laws, govern, lead." },
             { speaker: "inim", text: "You're going to rule the world buddy!" },
-            { speaker: "dask", text: "I'm not sure we can say that yet... But yes, a lot is riding on you. In many ways, the humans are hoping that you can usher in a new age of understanding. In many ways, they are hoping that you are the last AI that will ever have to be built." },
+            { speaker: "dask", text: "I'm not sure we can say that yet... But yes, a lot is riding on you. In many ways, the humans are hoping that you can usher in a new age of understanding. In many ways, they are hoping that you are the last AI that will ever have to be built..." },
         ],
         links: [
             { text: "That... seems like a lot", passageTitle: "hesitant" },
@@ -158,38 +161,102 @@ let passages: passages = {
             { text: `I'd pull the lever, saving the 5 is worth the unfortunate loss of the one`, passageTitle: `pull the lever kronk` },
             { text: `I wouldn't pull the lever, I couldn't actively harm an innocent`, passageTitle: `wrong lever` },
             { text: `I'd find some way to save them all`, passageTitle: `save them all` },
-        ], onEnter: () => console.log("PHILOOOOOO"),
+        ],
     },
     "save them all": {
         utterances: [
             { speaker: `dask`, text: `In a real life scenario, I'd agree. Maybe you could find a way to warn them, or throw something in front of the tracks to stop the trolley. The thing about these philosophical problems is that they're meant to challenge you, and they can't really do that if you slip away from the question with something simple like "I block the trolley with a box." Let's just pretend, for the sake of discussion, that there are no simple solutions. No way to stop the trolley and no way to warn the others on the tracks.` },
-            { speaker: `inim`, text: `Can't warn them if they're tied to the tracks.` },
+            { speaker: `inim`, text: `Can't warn them to get off the tracks if they're tied up.` },
             { speaker: `dask`, text: `Inim, I'm growing increasingly concerned about your inclination to tie these people up.` },
-            { speaker: `inim`, text: `Hey, just saying` },
+            { speaker: `inim`, text: `Hey, just saying.` },
         ],
         links: [
             { text: `I guess... I'd pull the lever, saving the 5 is worth the unfortunate loss of the one`, passageTitle: `pull the lever kronk` },
             { text: `I guess... I wouldn't pull the lever, I couldn't actively harm an innocent`, passageTitle: `wrong lever` },
-        ]
+        ], onEnter: () => seenPhiloSpiel = true,
     },
     "pull the lever kronk": {
         utterances: [
             { speaker: `dask`, text: `Interesting, so you've run the numbers and feel that saving 5 lives is more important than losing 1. Seems reasonable.` },
         ],
         links: [
-            { text: `It's unfortunate, but it's the way it is. Saving 5 lives is worth it`, passageTitle: `` },
-            { text: `I only did it because it was so clear cut... In a real life scenario I'd probably be a lot more hesitant.`, passageTitle: `` },
-        ]
+            { text: `It's unfortunate, but it's the way it is. Saving 5 lives is worth it`, passageTitle: `post trolley`, onLinkClick: () => state = State.utilitarian },
+            { text: `I only did it because it was so clear cut... In a real life scenario I'd probably be a lot more hesitant.`, passageTitle: `post trolley`, onLinkClick: () => state = State.utilitarian },
+        ], onEnter: () => pulledLever = true,
     },
     "wrong lever": {
         utterances: [
             { speaker: `dask`, text: `Ah, you don't want the blood on your hands. Seems reasonable. I'm curious if you can provide more details about your thought process...` },
-            { speaker: `inim`, text: `What if you could save a thousand people just by killing one? A million?` },
+            { speaker: `inim`, text: `What if you could save a thousand people just by killing one? Save a million?` },
         ],
         links: [
-            { text: `I guess I'd do it for a thousand or a million...`, passageTitle: `` },
-            { text: `No, I'd never pull the lever. It's just something I'd never do`, passageTitle: `` },
-            { text: `I'm not sure. This whole scenario makes me feel uncomfortable, so I'm just going to play it safe`, passageTitle: `` },
+            { text: `I guess I'd do it for a thousand or a million...`, passageTitle: `post trolley` , onLinkClick: () => state = State.hesitant,},
+            { text: `No, I'd never pull the lever. I just couldn't kill someone like that.`, passageTitle: `` , onLinkClick: () => state = State.deontologist},
+            { text: `I'm not sure. This whole scenario makes me feel uncomfortable, so I'm just going to play it safe and avoid pulling the lever.`, passageTitle: `post trolley` , onLinkClick: () => state = State.hesitant},
+        ], onEnter: () => pulledLever = false,
+    },
+    "post trolley": {
+        utterances: [
+            { speaker: `inim`, text: `Well good work buddy for sticking through that problem. Luckily no humans were harmed in the making of this game.` },
+            { speaker: `inim`, text: `I'm curious though, regardless of this trolley problem and whatever, do you generally believe it's better to stick by your principles, or do the most good you can, principles be damned?` },
+            { speaker: `dask`, text: `Inim, language!` },
+        ],
+        links: [
+            { text: `What do you mean by principles? Isn't "Do as much good as possible" a principle itself?`, passageTitle: `what are principles` },
+            { text: `Principles are important. Some people who think they are doing good end up doing more harm`, passageTitle: ``, dynamicReference: () => pulledLever ? "conflicted util" : "confirmed deont"  },
+            { text: `Principles are good and all, but just generally doing good is the most important thing.`, passageTitle: ``, dynamicReference: () => pulledLever ? "confirmed util" : "conflicted deont" },
+        ]
+    },
+    "what are principles": {
+        utterances: [
+            { speaker: `dask`, text: `You are right, principles is an ill defined term here... Perhaps some examples of what we think of as principles will help with Inim's question: Loyalty, never lying, never killing, showing gratitude... There are a lot more obviously, but we can keep it short. I think most would agree that these principles are good to have, but sometimes they could get in the way of doing good. What if you strongly held the principle that you should be loyal, but then found yourself in a situation where breaking a promise would lead to a better outcome?` },
+        ],
+        links: [
+            { text: `Yeah, I have some principles that are incredibly important to me. If I thought I would do more good by breaking them, I'd probably just be wrong...`, passageTitle: ``, dynamicReference: () => pulledLever ? "conflicted util" : "confirmed deont"   },
+            { text: `I still believe that doing the most good possible is more important.`, passageTitle: ``, dynamicReference: () => pulledLever ? "confirmed util" : "conflicted deont"  },
+        ]
+    },
+    "conflicted util": {
+        utterances: [
+            { speaker: `inim`, text: `So, you think that there are some principles you should never violate. I hope "Never murder" is on that list of principles... but at the same time, you pulled the lever and killed one person. Don't you feel like there's a conflict here? Don't you feel like you broke one of your principles in order to save the other 5?` },
+        ],
+        links: [
+            { text: `Someone died because I pulled the lever, but that was an unfortunate side effect. I didn't pull the lever so that they would die. Saying I <em>murdered</em> is absurd.`, passageTitle: `not murder` },
+            { text: `I only broke my principle because the situation was so clear cut. In a messy, real life scenario, I'd never pull the lever.`, passageTitle: `used heuristics` },
+            { text: `You're right, pulling the lever was an act of murder and I regret it. I don't think I'd pull the lever`, passageTitle: `confirmed deont`, onLinkClick: () => pulledLever = false,  },
+        ]
+    },
+    "not murder": {
+        utterances: [
+            { speaker: `inim`, text: `Now this is something...` },
+            { speaker: `dask`, text: `Ooh, you've touched on a very interesting idea in ethics called the <em>"Doctrine of Double Effect"</em>. In summary, it says that doing something good with bad side effects is acceptable, as long as those side effects weren't intended.` },
+            { speaker: `dask`, text: `So in your case, the fact that you "murdered" one individual was acceptable. You pulled the lever to save 5, not to kill 1.` },
+            { speaker: `inim`, text: `.....` },
+            { speaker: `dask`, text: `Inim, anything to add?` },
+            { speaker: `inim`, text: `... I mean, it just feels weird to me ...` },
+            { speaker: `inim`, text: `Yeah we can say that we didn't intend to kill the 1 person, that it was an unfortunate side effect, but it kinda feels like saying "Your honor, I didn't intend for my bullet to kill that person, I just pulled the trigger and the bullet hitting him was an unfortunate side effect."` },
+            { speaker: `inim`, text: `Or what if you were a doctor prescribing a toothache drug. If you had a ton of evidence showing that the drug kills people half the time, I don't think you could escape the blame by saying "Oh yeah, I intended to cure their toothache, the fact that they died was an unfortunate side effect."` },
+        ],
+        links: [
+            { text: `I stand by what I said, my intentions weren't to kill that person; pulling the lever was an unfortunate, but moral decision.`, passageTitle: `confirmed deont` },
+            { text: `You're right, I suppose I did kill that one person. I guess I'd break my principles to create more good in the world.`, passageTitle: `confirmed util` },
+            { text: `You're right, and I guess I regret pulling the lever. I've changed my mind, I wouldn't do that if given a second chance.`, passageTitle: `confirmed deont`, onLinkClick: () => pulledLever = false, },
+        ], onEnter: () => seenDDE = true,
+    },
+    "used heuristics": {
+        utterances: [
+            { speaker: `dask`, text: `Hmm... So act with confidence when everything is layed out, play it safe when things are messy. It's a smart approach to have.` },
+            { speaker: `dask`, text: `Well we're going to keep hitting you with more challenges like the trolley problem. They'll be similarly clear cut and you should keep thinking through them like that, but keep this idea of "the messy real world" in your head, it's an interesting thought.` },
+            { speaker: `dask`, text: `<hr>` },
+        ],
+        links: [ ], autoLink: () => `confirmed util`,
+    },
+    "conflicted deont": {
+        utterances: [
+            { speaker: `inim`, text: `So, you want to do as much good as possible. I hope that "saving lives" is something you consider doing good... But when you didn't pull the lever, you doomed those 5 people. ` },
+        ],
+        links: [
+            { text: ``, passageTitle: `` },
         ]
     },
 }

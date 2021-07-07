@@ -62,7 +62,7 @@ let renderLinksGeneric = (main: Element, passage: passage) => {
             // render the link only if the link has no "showLink" hook or if the showLink hook passes
             if (!('showLink' in link) || link.showLink!()) {
                 let linkElem = document.createElement("a");
-                linkElem.innerText = link.text;
+                linkElem.innerHTML = link.text;
                 // Set the onclick property to render the next passage
                 linkElem.onclick = () => {
                     // don't do anything if the link has been clicked in the past (or if the link was unclicked, but part of a group of links where another one was clicked)
@@ -224,10 +224,9 @@ validatePassages();
 
 let textSpeedSlider = (document.getElementById("textSpeedSlider")! as HTMLInputElement);
 textSpeedSlider.oninput = () => {
-    // 1000 minus the value, that way higher values are faster
-    let x = (1000 - parseInt(textSpeedSlider.value));
-    // Make the slider non-linear, to allow players to really slow it down
-    delay = baseDelay * (x ** 2) / 250000;
+    // Make the slider a logistic curve
+    let x = parseInt(textSpeedSlider.value);
+    delay = 2 * baseDelay / (1 + Math.E ** (-0.005 * (500 - x)));
     console.log(`New text delay ${delay}`);
 }
 

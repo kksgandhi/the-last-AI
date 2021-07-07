@@ -1,9 +1,9 @@
 // Title of your game
 let title = "The Last AI";
 // What passage should the game start on?
-let startingPassageTitle = "intro";
+let startingPassageTitle = "philosophy go";
 // change to "light" to start with a light colorscheme
-let defaultColorScheme = "light";
+let defaultColorScheme = "dark";
 // Should the game yell at you when you have passages that don't lead anywhere? Set this to false and warning messages will go to the console instead.
 let debug = false;
 // Should unclicked links be cleared away?

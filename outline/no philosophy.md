@@ -1,0 +1,2 @@
+[[philosophy go]]
+[[philosophy pretentious]]
