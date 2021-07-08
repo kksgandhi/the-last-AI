@@ -1,9 +1,9 @@
-This is an interactive fiction (IF) game designed to teach philosophy (with a focus on normative ethics).
+This is an interactive fiction (IF) game designed to teach philosophy (with a focus on normative ethics). For more information about the design and research goals of this game, see the `docs/` folder.
 
-It was written in twee, a text-based language for IF games that can be converted to a playable browser game or Twine game using compilers such as [tweego](https://www.motoslave.net/tweego/). The story format is sugarcube v2
+This game was written in [micrologue](https://github.com/kksgandhi/micrologue)
 
-Build from source:
+If you are looking for a playable version of the game, see the "releases" tab to the right. Or [click this link](https://github.com/kksgandhi/the-last-AI/releases). **At the moment there are no releases because the game is work in progress**
 
-```
-/<path_to_tweego_executable>/tweego src/ > the-last-AI.html
-```
+If you are interested in seeing a work in progress version of the game, clone the repository, change `startingPassageTitle` in `configuration.ts` to "intro", and run `make`. This will require `tsc`, the typescript compiler. Install it [here](https://www.typescriptlang.org/download)
+
+For a visual outline of the game, open the `outline/` folder in [Obsidian](https://obsidian.md/) or other Zettelkasten visualization software.

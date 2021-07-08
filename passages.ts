@@ -5,10 +5,10 @@ enum State {
         hesitant,
 };
 
-let state = State.none;
+let state          = State.none;
 let seenPhiloSpiel = false;
-let pulledLever = false;
-let seenDDE = false;
+let pulledLever    = false;
+let seenDDE        = false;
 
 let passages: passages = {
     "empty": {
@@ -20,6 +20,16 @@ let passages: passages = {
         ]
     },
     "intro": {
+        utterances: [
+            { speaker: `dask`, text: `This game is designed to challenge your philosophical beliefs, and may be abrasive or critical of you at times. Furthermore, this game has references to murder. Please click one of the yellow links below to continue.` },
+        ],
+        links: [
+            { text: `I am fine with that, and would like to start the game.`, passageTitle: `begin game` },
+            { text: `I am not in a comfortable place emotionally, and would not like to play.`, passageTitle: `no game` },
+        ]
+    },
+    "no game": { utterances: [ { speaker: `dask`, text: `That is fine, close this game and have a wonderful day :)` }, ], links: [ ] },
+    "begin game": {
         utterances: [
             { speaker: "dask", text: "Hello there. My name is Dask, I'm glad you've woken up. " },
             { speaker: "inim", text: "Yup, look who finally rolled out of bed." },
@@ -253,7 +263,40 @@ let passages: passages = {
     },
     "conflicted deont": {
         utterances: [
-            { speaker: `inim`, text: `So, you want to do as much good as possible. I hope that "saving lives" is something you consider doing good... But when you didn't pull the lever, you doomed those 5 people. ` },
+            { speaker: `inim`, text: `So, you want to do as much good as possible. I hope that "saving lives" is something you consider doing good... But when you didn't pull the lever, you doomed those 5 people. Do you feel like there's a contradiction here? ` },
+        ],
+        links: [
+            { text: `I want to do good, but the best way to do that is to stay in the boundaries of my principles.`, passageTitle: `rules are useful` },
+            { text: `Those 5 people died, and if I had pulled the lever I could have saved them, but that's not the same as <em>killing</em> them. Letting things happen is not the same as causing them to happen.`, passageTitle: `killing letting die` },
+            { text: `You're right. I want to do as much good as possible, and that means that I should have pulled that lever.`, passageTitle: `confirmed util` },
+            { text: `You're right, if I want to stick by my principles, I can't do all the good. I'm fine with that.`, passageTitle: `confirmed deont` },
+        ]
+    },
+    "rules are useful": {
+        utterances: [
+            { speaker: `dask`, text: `Ooh I like this thought... stick by some principles that help you determine right from wrong, do as much good as possible.` },
+        ],
+        links: [ ], autoLink: () => "confirmed deont",
+    },
+    "killing letting die": {
+        utterances: [
+            { speaker: `dask`, text: `Ah! The question about whether killing is the same as letting someone die is such an interesting one... but without getting into it at the moment, it seems like what you are saying is that when you take actions, you'll try to do as much good as possible, but you're fine not <em>actively</em> doing good, you're fine playing it safe.` },
+            { speaker: `inim`, text: `Hm. You mentioned earlier that you thought doing good was more important than sticking to your principles, but it seems like you do have a principle, some sort of "non-aggression" principle not to do harm when it's not required.` },
+            { speaker: `dask`, text: `This is a common moral philosophy, this sort of "I'll do good, but I won't put myself out there and pull levers I don't understand". Well, let's examine this idea of "principles" further, and maybe think about whether you have other principles that are interesting.` },
+        ],
+        links: [ ], autoLink: () => "confirmed deont",
+    },
+    "confirmed util": {
+        utterances: [
+            { speaker: `dask`, text: `You are a utilitarian` },
+        ],
+        links: [
+            { text: ``, passageTitle: `` },
+        ]
+    },
+    "confirmed deont": {
+        utterances: [
+            { speaker: `dask`, text: `You are a deontologist` },
         ],
         links: [
             { text: ``, passageTitle: `` },
