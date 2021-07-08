@@ -1,6 +1,5 @@
 This project is intended to serve as a platform for research on philosophical video games and thus has no singular research question. A variety of research could be conducted by having participants play the game and potentially through modifications of game elements.
 
-The game is aimed at students 16 years of age and older, though this could certainly be revised as the game is developed further (and I could easily see younger students playing the game without difficulty). This choice is not because of any graphic themes of the game, but due to the complex concepts being introduced that very young students may have difficulty understanding.
 
 ## Game Goals
 
