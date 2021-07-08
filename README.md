@@ -4,7 +4,7 @@ The game is aimed at students 16 years of age and older, though it is still play
 
 This game was written in [micrologue](https://github.com/kksgandhi/micrologue)
 
-If you are looking for a playable version of the game, see the "releases" tab to the right. Or [click this link](https://github.com/kksgandhi/the-last-AI/releases). **At the moment there are no releases because the game is work in progress**
+If you are looking for a playable version of the game, see the "releases" tab to the right. Or [click this link](https://github.com/kksgandhi/the-last-AI/releases).
 
 If you are interested in seeing a work in progress version of the game, clone the repository, change `startingPassageTitle` in `configuration.ts` to "intro", and run `make`. This will require `tsc`, the typescript compiler. Install it [here](https://www.typescriptlang.org/download)
 
