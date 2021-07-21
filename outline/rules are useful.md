@@ -1,3 +1,3 @@
 Cool, nice metaphilosophy
 
-Autolink to confirmed deont
+Autolink to [[confirmed deont]]

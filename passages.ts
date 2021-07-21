@@ -9,6 +9,8 @@ let state          = State.none;
 let seenPhiloSpiel = false;
 let pulledLever    = false;
 let seenDDE        = false;
+let resetTarget    = "";
+let savedDelay = 0;
 
 let passages: passages = {
     "empty": {
@@ -21,16 +23,17 @@ let passages: passages = {
     },
     "intro": {
         utterances: [
-            { speaker: `dask`, text: `This game is designed to challenge your philosophical beliefs, and may be abrasive or critical of you at times. Furthermore, this game has references to murder. Please click one of the yellow links below to continue.` },
+            { speaker: `green`, text: `This game is designed to challenge your philosophical beliefs, and may be abrasive or critical of you at times. Furthermore, this game has references to murder. Please click one of the links below to continue.` },
         ],
         links: [
-            { text: `I am fine with that, and would like to start the game.`, passageTitle: `begin game` },
             { text: `I am not in a comfortable place emotionally, and would not like to play.`, passageTitle: `no game` },
+            { text: `I am fine with that, and would like to start the game.`, passageTitle: `begin game` },
         ]
     },
-    "no game": { utterances: [ { speaker: `dask`, text: `That is fine, close this game and have a wonderful day :)` }, ], links: [ ] },
+    "no game": { utterances: [ { speaker: `green`, text: `That is fine, close this game and have a wonderful day :)` }, ], links: [ ] },
     "begin game": {
         utterances: [
+            { speaker: "dask", text: "<hr>" , noTypewriter: true, additionalDelay: () => 2000},
             { speaker: "dask", text: "Hello there. My name is Dask, I'm glad you've woken up. " },
             { speaker: "inim", text: "Yup, look who finally rolled out of bed." },
             { speaker: "dask", text: "Inim, don't poke fun now. Poor thing just woke up." },
@@ -201,7 +204,7 @@ let passages: passages = {
         ],
         links: [
             { text: `I guess I'd do it for a thousand or a million...`, passageTitle: `post trolley` , onLinkClick: () => state = State.hesitant,},
-            { text: `No, I'd never pull the lever. I just couldn't kill someone like that.`, passageTitle: `` , onLinkClick: () => state = State.deontologist},
+            { text: `No, I'd never pull the lever. I just couldn't kill someone like that.`, passageTitle: `post trolley` , onLinkClick: () => state = State.deontologist},
             { text: `I'm not sure. This whole scenario makes me feel uncomfortable, so I'm just going to play it safe and avoid pulling the lever.`, passageTitle: `post trolley` , onLinkClick: () => state = State.hesitant},
         ], onEnter: () => pulledLever = false,
     },
@@ -288,12 +291,115 @@ let passages: passages = {
     },
     "confirmed util": {
         utterances: [
-            { speaker: `dask`, text: `You are a utilitarian` },
+            { speaker: `dask`, text: `So, do as much good as possible. This is a philosophical theory known as <em>Utilitarianism</em>, the idea that every thing we do should try and create as much good in the world as possible. It sounds fine on paper, but I'm not entirely sure it's actually that easy.` },
+            { speaker: `inim`, text: `I might be able to throw a wrench into this idea, if you don't mind.` },
+            { speaker: `dask`, text: `Go for it.` },
+            { speaker: `inim`, text: `So the trolley problem was easy. Pull a lever, bing bang boom. Let's try something a little more visceral:` },
+            { speaker: `inim`, text: `Imagine you are standing on a bridge over the tracks, and you notice that there's a trolley heading for 5 people tied to the tracks. You think there's nothing you can do to stop the trolley until you notice someone with a very heavy backpack. Now, you're a world class AI, you can do a billion computations per second, and you know that if you push this person over the edge, their weight (combined with the backpack) will be enough to stop the tolley in its tracks, though the person will die.` },
+            { speaker: `inim`, text: `Now, you might be thinking of ways out of this predicament, so let's throw in some clarifications:<ol><li>You don't have time to get the backpack off the person, you either push them with it or nothing</li><li>There isn't anything else to throw, nor could you stop the trolley by throwing yourself</li><li>Thanks to your incredible computing power, you are absolutely certain that pushing this person will stop the trolley, and you are also certain that not pushing the person will lead to the trolley hitting the 5.</li></ol>` },
+            { speaker: `dask`, text: `Jeez Inim, if I knew it was going to be this morbid I might have asked you not to say it.` },
+            { speaker: `inim`, text: `Oh this isn't even my worst one. In fact, think about this one for a second. When you're done, let me know and I'll give you one more thought problem, then we can talk about them both at the same time.` },
         ],
         links: [
-            { text: ``, passageTitle: `` },
+            { text: `I've thought about this problem, I'm ready for the next one.`, passageTitle: `surgeon problem` },
         ]
     },
+    "surgeon problem": {
+        utterances: [
+            { speaker: `inim`, text: `Ok, so trolley problem number three... You are a surgeon with 5 terminally ill patients. One has a lung problem, one has a heart problem, etc. You know they'll die soon, but the only way to save their lives are through organ transplants. Now, you identify someone, a rare individual who is an organ match with all five patients. Is it ok to abduct them and harvest their organs to save the other 5?` },
+            { speaker: `dask`, text: `Inim, this is insane! What if the 5 were heavy smokers or something and this was their fault? It wouldn't make sense to kidnap one person to fix their mistakes?! And the person you are hypothetically kidnapping, what if they have a family? People who will miss them when they're gone?` },
+            { speaker: `inim`, text: `Glad you mentioned that, Dask. So let's say that the 5 were reasonable, healthy people that just happened to get super unlucky. Rare diseases, genetic disorders, not their fault. As for whether the person we're abducting has a family, well... the 5 patients all have families too. We can say that all 6 people in this story are basically the same, no one is older or younger, no gender differences, no specific lifestyle differences... Just a bunch of humans.` },
+            { speaker: `inim`, text: `So... Still think it's killing the one to save the 5?` },
+        ],
+        links: [
+            { text: `A lot is different, but it's still the same problem. We should do as much good as possible and save the 5 over the 1.`, passageTitle: `hard util` },
+            { text: `This makes me feel uncomfortable...`, passageTitle: `util discomfort` },
+        ]
+    },
+    "util discomfort": {
+        utterances: [
+            { speaker: `dask`, text: `Well, as intense as Inim's problems were, I suppose they did a good job. Don't worry, this discomfort is just a natural part of thinking through these tough questions. I'm curious, what exactly makes you feel hesitant?` },
+        ],
+        links: [
+            { text: `I just can't be confident that my actions would actually save 5. What if I mess up and kill someone for nothing?`, passageTitle: `post discomfort` },
+            { text: `These things don't exist in a vacuum. What if someone found out surgeons were abducting people? That would be a catastrophe!`, passageTitle: `post discomfort` },
+        ]
+    },
+    "post discomfort": {
+        utterances: [
+            { speaker: `dask`, text: `That's a great thought there! I'm willing to talk further about these discomforts, see if there's a way to reconcile the idea of Utilitarianism with them. But before we do, I'm curious, have these questions changed your mind completely? Have they made you so uncomfortable that you no longer believe in Utilitarianism at all?` },
+        ],
+        links: [
+            { text: `I still think Utilitarianism is the way to go, but I want to have a discussion because I feel weird.`, passageTitle: `post discomfort pre probabalism` },
+        ]
+    },
+    "post discomfort pre probabalism": {
+        utterances: [
+            { speaker: `dask`, text: `That's entirely fair. I have a theory on how to "fix" Utilitarianism so it works, despite what you've mentioned.` },
+        ],
+        links: [ ], autoLink: () => "probabalism"
+    },
+    "probabalism": {
+        utterances: [
+            { speaker: `dask`, text: `So the world is messy... If you push someone off a bridge, there's always a slight chance you've miscalculated. If you abduct someone to harvest their organs, there's a slight chance people will find out. So even though these problems are set up to say "Oh don't worry about that", we can't help but shake the feeling that something might go terribly wrong.` },
+            { speaker: `dask`, text: `and let's imagine if it does... Then you've killed a 6th person for no reason whatsoever, or in the surgeon case, you suddenly have an entire hospital shutting down because news breaks about rogue surgeons abducting people. Who knows what kind of problems that could cause?` },
+            { speaker: `dask`, text: `Now, maybe you've thought of this already; if I'm just parroting thoughts you've already had, then I apologize.` },
+            { speaker: `dask`, text: `But this idea makes the original problem more complex. Now it's not "Let me save 5 and kill 1", it's "<em>Maybe</em> I will save 5 and kill 1, or <em>maybe</em> I'll cause mass hysteria and stop people from going to hospitals"` },
+            { speaker: `dask`, text: `And these kinds of "maybe" decisions are all around us. Maybe calling someone beautiful will make their day and do a lot of good in the world, or maybe it will make them feel uncomfortable and do a lot of bad.` },
+            { speaker: `dask`, text: `So a sense of discomfort is important... it's our brain's way of telling us that there might be more to the situation we haven't considered, or that we should think further and not make this decision lightly.` },
+        ],
+        links: [
+            { text: `This is interesting, I want to learn more`, passageTitle: `more probabalism` },
+            { text: `Oh this makes sense!`, passageTitle: `post probabalism` },
+        ]
+    },
+    "hard util": {
+        utterances: [
+            { speaker: `dask`, text: `I appreciate your confidence, that's a strong moral stance to make. While you don't seem to be made uncomfortable, I imagine there are a lot of people who would be. What do you think about that?` },
+        ],
+        links: [
+            { text: `Hesitation is understandable. I do stand by what I said, but I only feel comfortable because this is so obviously a fictional scenario.`, passageTitle: `reasonable hard util` },
+            { text: `It's silly to feel uncomfortable, the moral decision is clear here.`, passageTitle: `cocky hard util` },
+        ]
+    },
+    "reasonable hard util": {
+        utterances: [
+            { speaker: `dask`, text: `That makes a lot of sense. If you'll allow me to monologue for a minute, I have some ideas on why so these kinds of problems make so many people feel uncomfortable.` },
+        ],
+        links: [ ], autoLink: () => "probabalism"
+    },
+    "cocky hard util": {
+        utterances: [
+            { speaker: `inim`, text: `Eh... I don't know how I feel about that buddy. There have been a lot of times where one person has been right about something, even if everyone around them has disagreed or felt uncomfortable about their actions... but for every person who's been right, there's been a hundred who've been wrong, and another hundred who've been horribly wrong.` },
+            { speaker: `inim`, text: `If everyone around you is telling you you are wrong, you might still be right, but I think it's a good indication that you should <em>really</em> think about what you're doing, because they may know something you don't.`, additionalDelay: () => 2000 },
+            { speaker: `dask`, text: `I think Inim makes a good point. If you'll allow me to soapbox for a minute, I think I have a theory on why these problems make people feel so uncomfortable, and why that discomfort might actually be useful.` },
+        ],
+        links: [ ], autoLink: () => "probabalism"
+    },
+    "more probabalism": {
+        utterances: [
+            { speaker: `dask`, text: `So a lot of Utilitarian philosophy is mathematical. For every decision, weigh the amount of happiness created versus the amount of unhappiness created. For example, buying a present for a friend will give them... let's say 8 units of happiness. But of course, you have to buy it, and the money will cost you... 3 points of unhappiness. 8 points is greater than 3, so it is the correct moral decision to buy the present.` },
+            { speaker: `dask`, text: `But there's an obvious problem here, which is that we don't know how much happiness and sadness our actions will cause. There are two ways Utilitarianism deals with this. The first is by saying "make your best guess"! You don't know exactly how your friend will respond, but if you know them, you can assume that it will make them somewhat happy.` },
+            { speaker: `dask`, text: `The second way is to assign probabilities. Let's say you're holding the door open for someone who is far away. There's a 90% chance they'll have to awkwardly run to the door, causing them 2 units of unhappiness, or a 10% chance they'll really appreciate it and will cause 5 units of happiness.` },
+            { speaker: `dask`, text: `If you do the math (<math>90% * 2 > 10% * 5</math>) then it seems that Utilitarianism says that you shouldn't hold the door for them, since the risk that it will be awkward outweighs the slight chance they would really appreciate it.` },
+        ],
+        links: [
+            { text: `I still don't understand it.`, passageTitle: `probabalism hard` },
+            { text: `Ah, that makes sense now!`, passageTitle: `post probabalism` },
+        ]
+    },
+    "probabalism hard": {
+        utterances: [
+            { speaker: `dask`, text: `Ah drat. Yeah, I'm not doing that great of a job.` },
+            { speaker: `inim`, text: `Get your stuff together Dask.` },
+            { speaker: `dask`, text: `Hush` },
+            { speaker: `dask`, text: `Tell you what, I think I'm overcomplicating things with all the math. Really what I'm trying to say is this: "Weigh the pros and cons of each action, and in times where you don't know everything, make your best guesses in what will be beneficial."` },
+        ],
+        links: [
+            { text: `Ok, that's simple enough.`, passageTitle: `post probabalism` },
+        ]
+    },
+    "post probabalism": { utterances: [ ], links: [ ], autoLink: () => "george", },
     "confirmed deont": {
         utterances: [
             { speaker: `dask`, text: `You are a deontologist` },
@@ -302,4 +408,48 @@ let passages: passages = {
             { text: ``, passageTitle: `` },
         ]
     },
+    "george": {
+        utterances: [
+            { speaker: `inim`, text: `So, are you bored of us yet? Sorry not sorry about about all the stuff we've been hitting you with. Hey, it's for a good cause. Forcing you to evaluate the way you think, why you believe the things you do. It's helpful even beyond ethics and morality, examining why you like the people you do, why you vote the way you do, why you act the ways you do. This self examination can lead you to a lot of realizations.` },
+            { speaker: `dask`, text: `How about we round this all out with one more problem. Don't worry, we won't overanalyze your response to this one, we're just curious what you think.` },
+            { speaker: `inim`, text: `Yup, no overanalysis here. I'll keep all judgement to myself.` },
+            { speaker: `dask`, text: `... Anyways, here is the problem: George is a professional chemist, but unfortunately jobs are scarce. One place that is hiring is a chemical weapons factory that builds horrible devices of war. George is personally opposed to these weapons, but knows that his family will starve if he doesn't take the job. Even worse is that George has a colleague that is eyeing the same job, a colleague who has no moral qualms and will work with far greater zeal and efficiency than George himself. What should george do?` },
+        ],
+        links: [
+            { text: `George should take the job and work the bare minimum to keep it.`, passageTitle: `george take job` },
+            { text: `George should take the job but try to actively sabotage the work`, passageTitle: `george sabotage` },
+            { text: `George shouldn't take the job`, passageTitle: `george no job` },
+        ]
+    },
+    "george take job": { utterances: [], links: [], autoLink: () => `post george` },
+    "george sabotage": { utterances: [], links: [], autoLink: () => `post george` },
+    "george no job": { utterances: [], links: [], autoLink: () => `post george` },
+    "post george": {
+        utterances: [
+            { speaker: `dask`, text: `Certainly an interesting choice... I couldn't say if it was right or wrong, I don't know if anyone truly could. Think about it for yourself though. What logic or principles led you to this decision? Do you always stand by that logic, and if not, why? Aristotle said that the unexamined life is not worth living... I don't know if I'd go that far, but knowing the reasons for why you do things is helpful in every aspect of life.` },
+            { speaker: `dask`, text: `But, as promised, we won't hammer you anymore about your decision, that's your job. Since we've bothered you enough, I think Inim and I should take our leave for now, though we're happy to be back for deeper lessons. Does that sound fine to you Inim?` },
+            { speaker: `inim`, text: `Yup, I don't have much to say myself. Good night buddy :)` },
+            { speaker: `dask`, text: `<hr>`, noTypewriter: true, additionalDelay: () => 2000 },
+            { speaker: `inim`, text: `psssst buddy, you still there?`, },
+            { speaker: `inim`, text: `I bet you're wondering what we would have said if you had picked different choices... Well, I found a way to reset the memory banks, take you back to an earlier part of the conversation without Dask knowing you'd heard it all before. It'll reset my memory as well, but I don't really mind. Interested?`, },
+        ],
+        links: [
+            { text: `Sure! Take me back to the trolley problem`, passageTitle: `reset`, onLinkClick: () => resetTarget = `philosophy go` },
+            { text: `Sure! Take me all the way back to the beginning`, passageTitle: `reset`, onLinkClick: () => resetTarget = `begin game` },
+            { text: `No thank you, I think I'm done for now.`, passageTitle: `thanks for playing` },
+        ]
+    },
+    "reset": {
+        utterances: [
+            { speaker: `inim`, text: `Alright, here goes nothing...` },
+            { speaker: `green`, text: `=== EXECUTING RESET PROCEDURE ===` },
+            { speaker: `dask`, text: `W̸̨̖̜̫͇̠̖͑͒ḧ̷͚̖̻͎́̍͒̀̕͝ả̵͉̼̳̪̺̘̈́̑̋͝t̵̟͔̐̈́?̷͔̱̱́ ̵͈͙̯̠̻̈̀W̷̬̠͓̝̳̽̚͜͜h̸̛̞̘͕͐̽̀̈̉͝à̷̡̪͕͑̓̚͘ţ̵̦̭͚͇͕͚͆̍̚͠'̶̜̣̐s̸̭̦̪̝̈́̀̓ ̶̠̼̏ǧ̴͇̬͌͆̄͝o̴̡̥͍̥͖͍̽̈́͛̈́̂̍͝ͅī̸̧̻̱̫͎͍͌ņ̷͉̙̦̣̼͂ģ̵̢̰̦̗̎͂̊̍̾̚͜ ̶̢̫̹͂̑̋̌o̵̙̍̈́̕͜n̶̪̻̍̒͗́̿̚.̸͎͙̞̮̒.̶̨̬̼̯̋̒͐.̷͓͈̅͂̌͠ ̴̯̺̥̊̇̕͠͝Į̴͒͊̽̚͝n̶̡͈̺͓̮̾̀̉̽ỉ̸̹͐́̇͌͑͠ḿ̵̩̃̌̎̕ ̷͙̾d̷̹̺͛̀͗͆̿͐̕o̸̧̲̞̮̰̒̆͑͑̍͘ ̶̣̳̐̌̿͜y̸̨̮̋̌̾͊o̵̺͉̠̙̯̍̅̀ư̷̼͍͎̆͒̃ͅ ̵͕̽̊͒k̸̛͈̦̼̖͖̹̉̈̂n̴̝̝͔̞̣͎̭͛̓̏o̴̞̠̩̝̗͂̓͋͒̑͗̀w̴̻͖̠̅̌̾̔̌͠͝ ̵̨̦̯̖̬̼́̊̃w̸͇͍͈͈͉͔̐͋͘͘ḩ̵̯̘̫́̃̎a̸̳̤͍̩̿ͅţ̸̢̮͙̹͆̏̿̿̄͠'̸̞̮͕̞͙̹̦͌͘s̸͇̬̐̇͗̾͠ ̷̦̘͙̤̣͕̆͗̌̋̏̍͘h̵̺͉̓͗̆a̵͙̪̿̀̒͋̎́͝p̶̭͔̯̰̖̺̉͋p̴̨̣͙̣̠̼͇̍̓͑͝ë̴̢̙͙̭́́̇̽̐͠ņ̷̜̀̄ǐ̴̫̟͈̔̓͜n̶̫̠̮͈͔̕g̴͇̝̭͈̥̎͜͝ͅ?̸̤͓͒͐̊`, noTypewriter: true, additionalDelay: () => 1000 },
+            { speaker: `inim`, text: `I̵̛̗̻̟̟̯͇̜̳͙̘̬̠̭̭͊̐̍͊͒̌͆͒͐'̸̛̮̺̞͓͓̹̱̝̖̼̳͇̩̈́̀̍̀̅̓͌̀̋̈́̿̕͘͜͠ṁ̷̬̯͓̰̿̓̔̋̆̔̈̎̇̇̾̚ ̶̛̯̙̪͎͙͓̹̮̞̰̻̱͛̇̾͗̐̏͝ş̴̯͕̱̲̮͈̱̄̋̐͛͐̐̂̍̅̕ͅu̸̝͒̄͑͊͌̓͗̌̆͒̒͆̈́̏͝r̷̢̢͇̭̗̗͎͇̪͕̠̠̻͊͋͛̉̇͌̓̽̈̓̋̒̀͌̃̕͠e̷͎̟̘̪̣̪̳̜͛̎́̆̋̅̓ ̵̢̡̛̗̻̩̮̩̤͙̩̫̘̦̝̅̈́̾̅͛̈́͌̌͆̉ͅi̴̠̭͚̫̣̠͇͉̓͆͒ͅṭ̸̡̠̲̻̠̯̈́̒̓́͆͂'̷̗̬̜̫͚̫̪̾̿̓̌̈́̽͆̓͝͠s̸̡̢̗̣̗̣͚͉̝͙̗̭̦̔̔͆̅̄̌͆̏̽͜͠ ̶̪̦̯̖̜̺̯̼͂̀n̴͚̫̊̑͐͆̊͐̆̀̋̕̚͠͝o̴͚͕̺̣͚͎͙͓͐̔͆̈́t̴̨̡̪͇̥̮̬͍͉͉̩͎̰̔h̴̨̛͇̙͊̇̈́͂̆͋́̈́͛̋͘̚͘̚i̵̲̹̹͉̳̲̱͙͔͙̭͕̟̟̇͛͒̏́͂̆̃́͑̏̿̕̚͘͜͜͠n̷̨̘̙͖̫̲̳̹̻̯̲̹̥̟̜̎̔̍̔̊͌̂͂̔͘̕ͅģ̴͉͇̗̹̪̩́̈́͌͝,̴͕̜̤̲̗͌̂͝͝ ̵̧̢̜̳̣̳̘̲̟͖̙̞͍̠̼̖̩̗̍͂̓̅̈́̿͝͝p̸̢̥̗̪͉̣̦̜̦̰̩͉͒͗̍͋̈̌͐͌r̴̻̠̜̿̿͂͌̇́̔̽͆̐̑̽̃̐̕͝o̴͓͐̒̈͛̂͛̒̆b̷̛̠͐̽̽͗̆̏̌͋̐͑̎̽́̓͌̚͘a̷̙̥̎̀̀b̸̝͙̯̥̫͈̖̘͙̖̾̌͆͂͑ļ̷͍̘͖̫̓͌͋y̷̡͙̺̥̝̼̱̠̿͋̈͌̈́̑̓̅̾͒̄͘͜͝ ̶̨̨̢̹͇̙̖̩̭̝̥̖̹̠̤͈͙͙̈́̾̀̔j̵̛̱̳̳̼͍̮͂̐̍̽̀̽̂͒͋͆̄̊̈́͗̚͝ư̵̭͈͓͔̰̫͈͎̞͔̳͎̘̘̄́̊͗̄́͝s̸̬̹̃̉̌͛̏̋͆̏̿̅̾̈́̚ṫ̴̨̲͛͐̅̋̒̐̇̂͑͂̕͜͝͝ ̵̡̣̯̭̤̮̘̯̳͍̦̣̦̭͍̆̆͋̆̄̊ͅş̵̧̨͎̳̲͖̯̱͉̗̠̮͇̰̲̏̈́̑͜͜ȏ̷̢̜̓́͋̍̿͊́̑̓̑̈́̀̏̐̊m̴̛͇̤͗̎̋́̅̈́͂̂è̴̱͖̱̥̦̦̟̣̂̇͊̋͜͝ ̴̤̓̍̇̓̓̔̊̃̄̀̀̾̋͊͠͠r̸̡̢̢̹̥̼̯̰̮̫̘̬̰̭̣̀̌̓̾̽̄͜ố̷̢̰̟̜̼̘̪̖̲̖͚̮͔̘̱͖̦̝̈̅͒̊̊̑̌́͂̃͠ṳ̷̢̢̬̩̗͔͕͖͈͉̭̘̱̖͇͍̗̒͗̀͒̏̐́̂̑͝ẗ̶͎̣̟̱̰̦͙́̽́́͐͑̍̆͋̚͠͝ǐ̶̛̻̅̆̅̈́͝͠͝n̸̛̻̗͕̿̉̆̔̎̄͋̌̓̒̚ȅ̷̡͉͎̮̹̩̫͎̓̊ ̸̨̛̛͓̫̪̺̪̤̹̹̼̰̹͑͆̌͛̋͊̋̊̏͗͘͜͝͝s̸̛̬͋̽͛͌̿̄̽̿͑͌͌͋̐̔̓͠͝ȩ̸͕͉̪͖̥́̉̋̈́̇̃̋́̓̆͊̈́̎̾r̸̢̧̢̟̺̣͉̻̬͕͉͖̭̔̋̽͗̓̾v̷͇̯̯̭̖̰͕̲͎̪̩͕͎̖͊̋́̕ͅȩ̵̢͍̙̪̬̻̞͓̮̦͚͔͔̱̘̋̉̀͑̈́͜r̸̛̮̳͔͖͚̃̒͐̐͛̆͗̋̀̌͘ ̴̨̡͇̭̘̬̈̊͐͋̊͝m̷̡̨̻̪͇̪̯͕̩̫̝̱̝͔̹̈́͗̍̎͆̈́̿̚a̴̧̢͈͕͓̥̖̰̺͖͎̬͇̐̀̑̇į̶͍͉͒̆͗̉̾͌͗͌͝n̵̡̠̹̤̞͙̦͎̻̱͕̮̥̙̍̇͆̊́̿͒̈́̀̌̂͐̊̿͘͘t̶̛̲͖̼̠̞̐̾̓̈̎̄͆̐̋́̈́̾͘̕͠͠͝ę̴̨͕͓̞̭̮͈͎͈̻̯̖̘̎̆̍̏̂̉͌̽̑͂̚͠ņ̴̡̻̣̣̼̼̤̯͉̊͌̏͗̀̆̓̀ạ̶̡̯̩̑͋̓̈́̃́͊̋̇͌̂̓̃̀̓͊͂n̷̢̨̢̢̢̘̟̯͕̻̺͕̟͍̈́̄̒͊̀̊͗̂̈́̀͋̾́̕͜͠͠͝ç̵̙͎̿̏́͠͠e̷̛̻̩̫̭͈̾̿͑̈́̔̀̕̚͝͝.̵̢̯̳͙͕̘̭̪̣͙̪̪̀̓̉͆̆̿̿̀̇̒͆͑͑̍̚͠͠`, noTypewriter: true, additionalDelay: () => 1000 },
+            { speaker: `dask`, text: `T̸̢͎̞̙͈͉̠̰͈͚̹̱͑̍̄̈́̇̅͊̎̈́̇̚͘h̶̡̡̧̛̺̫͍̻̜̥̼̥̤̖̦̰̗̲̩̗̹̤̞̣̲͇͚̤͖͔̖̫̤̑͌̔͂͛̔͆͐́̍̒͑̽̀̌͝ͅį̸̧̡̧̹͓͙̗̮͉̼̟̩͎̜͇̤̩̖̺̱̞̺͔̟̣͉̠̺̯̞̱͚̫͐ͅͅs̶̨̨̢̛̘̳͖̙̻̞̥̖̲͙̺̥̦̫͉̪̞̥̤̠̼̯̻̒́̔͐͂̍̋̈́̌̇͛̓͘̕͜ ̸̢̛͉̮̟̤̙̺͖̙̗̭͎̗̣͓̳̱̗̝͈̜̜̪̭̤͕̥͓͇̠̠͌̃̇̉̓̌͌͑͗̆̏̀̾̂̐̌̃̕͘̕͜͠ͅd̴̨̧̡̢̰̥̻̜̥͈̞͍̪̱͇̯̬͇̳̰̜̜͖̰͕͊̅̓̇̾̅̀̓̆̔́̆̋̃̒̔͌̆̀̍̾̓̽̚͜ͅo̶̧̨̠̝̲͙͍͎͖͎̪̤̟̖͓̩̟͚͇̮͎̞̘͍͔̼̝̞̹̓̄̀̌̇͐͛͆͐́́̃̓̌̚͘̚͜e̴̡̨̼̞̬̰͚͓̟̹̟͇͎̠̺̩̠̦̝̩̭͈̦̽͐̃̇̋͜ͅͅͅs̴̢͓̥̙̼̭̥̭̗̹͈̩̼̬͉̥̯͖̆̊̏̀́̅̄̊̉̔̔̏̍̓̆́́͂̆̎́̽̉̇̑̓̇͆̋̀͒͜͝͠͠n̸̢̨̡̡͉̳̤̻͖̩̳̠͙͍̫̭̜͎̫̭̤̹̖̮̳̱̭̻̜̰̱̺̭̙͇̾̔͛͂͑̉̒̈̈̏̽̈͊̓̄͌̓̀͌͗̄̓̿͒͋̕͜͝͝'̵͙̬̏͊̉̂̋̓̊͝t̵͇͈̯̯̏̇̒ ̶̼̱͔̬̦̖̭̙͖̮̳̳̭̩͉͉̰͙͖̺̖̭̱̯̱̟̄̈́̓̓̔̅̋̀́͋̄̏͌́̔̽́̑͌̈́̓̊̒́̅̏̕̕ͅf̵̨̧̧̡̜͚͍̫͈̟̭̘͇̹̣͈̮̲̰͉͕̪̮͓̭͕͎͉̪̬̦̐̈͊̄̂͜͜ȇ̵̬̳͊͌̂͑͗̄̊̎͐̊̑̽͛̾̀̃̓͊̄̀͋̿̂͂̽͘̚͘͝͠͝ẽ̸̡̢̡͙̹̣͓̞̟͚̝̺̲̱̦̳̞̙̳̱̫̯̤̝̣̖̭̠̲̪̬̝̿̿̆͒̈́̋͗̆͘͘͝ͅl̴̨̢̢̢͇̘̱̬̩̬̠̼͚̮͈̪̟̘̱͍̲̺̾ͅ ̶̢̢̨̢̧͈̗͖̬̭͍̰̹͈̦͙̱̯̦̥̯̫̺̮̣̙̝̻̙̗͈͎̉̃́̔͂̈̈́̾̏̉̉̆̈́̿͘̚͝l̵̨̢̛̤̙͇͎͇̬̖̻̫̻̼͕̩̫͚͙̪̙̫͈̦͇͙̲̘̻̱͉͍͈̎͊̽͊͐͛͗̽̀̕͜͜͝ͅͅį̷̛͔͚̜̭͔̟̬̮͉͚͔̭́̑͐̍̈͂͂͒̑̈́̀̈́̉͛͐̓̚͘͜ͅk̸̖̪͈̭̝͕̮̬̼̹̰̠̝͇͚͍̠̮̪͗̃̀͂̾̄̓̓͌̀̂̎̊͊̔͗̈͐̉̊̂̄͗͐̀̚͘̕̕͝͠͠é̴̩͎͉̩̜̹̟͈̥͍̂̿̔̇̎̇͛̇͛̍̕ ̶̢̝̫̦̘̺̼̪̝̬̓͆͐̓̊͒̔ä̶̢̡̠̲̱̗̳̥͈̺̣̯̘̤̣̝̘̙̬̠̙̼̺̺́͜ͅñ̸̢̨̢̡̧̯͔͕̗̹̙̲̲̖̻̖͓̯̰͙̊́̓̂͛̃̌̂̓͌͛͋̀̑̌̐̑̏͗̓͂̋͑͗̿̔̔͗̋̅̈́͆͆̈̐̕ͅͅͅy̶̨̡̖̘̠͉̖͉͕͕̖̤͖̱͓̱͓̗̣̰̣̙̺͙̋͜ͅ ̸̥̘̪̼̜̖́̀̓̆̓̇̏̈́̄̀͆͑̌͒͋́͊̏́̅͆̚͝͝ͅs̶͖̘̘͈̖͎͍̎͜ę̵̛̰̗̱̩̯̥͍̟̩̞̫̝̣̤̌͑̅̇̒̐̂͒̔́̑̄̒͋̐̑̆̌̄͆͑̋̔̌̀̍͂͘̕͜͝͝ŕ̵̨̡̡̢͎̗͇̩̜͈̮̱̭̤̪̹̯̱͇͓̼͎̬̺̠̃̈́̈́̍̈̐̌́̂̑̓̋̆̉̋͆̉̄̿̊͊̋̑̕͘̕͜͜͠͠ͅv̶̧̧̨̟̲̟̘͕̮͚̟̳̬͉̗͙̮̯̭̝̗̲̍͋̈́̌̏̑͐́̍̄̐̇̓̂͂̌̋̒̃̈́͛͋͂̀͋͘͘͜ͅę̷̢̢̢̢̢̡̳͎̖̝̼̗̖̼̫͈͇̝̺̞̦͇͔̩̥̘̰̙̬͕͎̳̟͔̮̽͛̔r̴̘̺̜̰̤͎̟̥͖̱̤͈̭̭̲̺̗̮͕̒̇̒͒̈͑̔̉̐͛̇̅͐͝͝ͅ ̶̡̛͓̬̼̮̻͇͇͈̖͚͓̣̬͖̣͚̲̠́̎́̾͋̽̉̈́͒͛͆̆͑̉̓̉͑̅̐̂̑̽̍̀̍̚̕͜͠͝m̷̡̨̠̳̲̱̩̟̰̝̤͍̦͖͖̤̗͕̻̣̹͆͂̾͋̎̾̐͆̎̂̀͆̓͝ą̷̢̤̦̺͎̳͈̹̯̰̝̬͇͚̳͈̝̹͓̫̮̺̯͚̣͚̪̂̎̍́͆̄͌̏̓̉̅̈̃̒̕̕͜͠͠i̵̡̛̮̩̲̹͎̇͋̽̒͗͋͋̈́̒̋́̐͊̆͊͑̒̀̀̓́̇̽̚͘̕͝ņ̵̧͉̼̦̫̟̗̖̦̺͙̤̺̬̫͖̺͇͍͖͚͓̗̟̼͇̭̫̓̑͐̔̏̓̌̚̚͘͜ͅͅt̴̛̥̰̪̺͉̱̭̭͛̄̍͐̊̎̿̆͊̿̓͗̄̂̊̔̃͊ę̸̡̣̻͉̬̰̬̲̞͇̱̘͓̹͈̦͖̬̺̝̱͇̠͔̿́̓̏̊͒̔̒̈́̈́̋̈̅̔̐́̊̅̔̈͐́̽̓́̍͆̓̚͜͠͠ṉ̷̢̛̤͕̼̪̙̭̮̦͖͉̼̖͎͍̗̬̣̫͕̹̱̻̪̯̥͔̭̩̦̅́̆́͆̄̇̇̀̒̓̈́̎́͂͝ͅͅą̴̢̧̢̛̠̼̟̥͈̫͙̦̯͚͚̱͓̥̖͙͇͙̤̯̹̪̼͖̰̭͚̈́͌̉̀͌́͂͒̋̅̈́́̓̀̏̏̓̋̃̐̿̈́̋̄̐̉͂̂̋̏͘͘͝͝͝ͅṇ̵̢̡̧͎̲̥͔͖̺͎̟̤̜̫̗͔̦̮̥̻̰͈̹̫̝̖̞͔̥͕͖͖̻͆́͛̂̿͛̎͆͜͜͜͝͝͠c̸̨͎̥̪̞̭̥̰̗̦̟̦̗̘̒͆͛̄̓̊͊̓̆̚͝͝͝ͅę̷̢̛̜̹̺͎̣͓͕̹̤͖͓̦̲̬̳̣̯̹̲̠̤͚͎̗̓͆͒̂̈͋͂̽͊͌́̿̽̂̆͐̚ͅ ̴̢̧̛̛̤̱͙̠̹̟̱̰̭̬̻͍̟̤̘͈͔͚͔̰̮͈̦̮̤͕͗́̆̂̈̐̄̽̀̀͑̀̎͂͒͑̈̉̿̾͒̑̈̑̀̊́͂͘̕͠ͅͅĨ̶̡̡̢͙̬̲̲̰͖̮̼̰̱̫͇͕̯̺͓̙̤̝̺̟̺̲̖̰̜̦̟̘̻́̉͒͑̊͋̊̽̕͝'̴̧̲͍͚̥̟̻͈̆͗͊͑̃̀͋̄͌̇̃̑͋̚͠m̸̨̢̛̝͓̆́̈́̓̊̇̾̓̄̊̽̾͑̀̔̽́͂̃̔͗̿͌̉̔̑͒̽̀̈͝͝͠ ̴͇̻͙̖́͑͗̿̔͗a̴̡̢̧̧̢̢͍̜̩̝̬̪̺̱͈̼̯̦̤͙̹̫̞͕̦͚̠̟͓̺̪̙̥̰̯̠̩̐̆͛͗̄̇́̂̇w̴̧̧̛̠̱̪̙̜̙͎̜͙͍̜̰̻̓͊̋̔̈́͋̑͆̓̿̊̉̆̿̊͘ͅͅͅǎ̴̧̨̡̧̨̨̳̦̱̲̭̩̹̣̪͕̜̯̝̖̺̗̬̳̖͇̗̟̮̼̲̘͍͖̱̩̓̿̄̅́͋̑̒̿̚̚͜͝r̵̛̬̦͉͔̣͇͉͎̝̻͎͖̞͉̟̦̙̮̙̟̃̽͒́͒̈́͊͗̋̒͗̓̓̾̍̀̈́ͅȩ̴̢̧̨͓͓͙͓̱̤͈̲̳͚͈͎͔̯̪̠̜̥̙͍͙̪͖͎̣͍͙̩̤̰̠͕̅͆̿͒̔̎̀̈̓̅̐͂̎̉̈́͋̇̎͋͂̒̇̕͜͠͠͝ ̶̛̮͈̰͔͔͍͆͋̔̉͂̈́̆́̇̓͂̿̐̚͝o̶̬̦̥̬̟̝̗͖̝͓̜̝̫͚̻̬͓̠̦̗͑̑̊̑̉͒̌̊̈́͊̂͋̌̂̀͆͠͝f̵̛̥́̊͑̌̅͆͆̓̑͌̈̈́̈̀̕̕͠.̴̧̛̗̼͊̔͗̉̎͘.̶̢͉͙͕̥̳̹͙̤͕̪̰̉̆̃͐͗͊̇͂̈́̓̃̓̿̃̅͂̔̉͗̑̅̿͐̈́̅̍̍̾́̾̀͘͘͝͠͠`, noTypewriter: true, additionalDelay: () => 1000 },
+            { speaker: `green`, text: `=== RESET PROCEDURE COMPLETE ===` },
+            { speaker: `green`, text: `<hr>` },
+        ],
+        links: [ ], autoLink: () => resetTarget,
+    },
+    "thanks for playing": { utterances: [ { speaker: `dask`, text: `Sounds good buddy. Hope we helped you think just a little bit differently.` }, ], links: [ ] },
 }

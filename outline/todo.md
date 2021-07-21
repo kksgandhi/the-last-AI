@@ -1,7 +1,17 @@
-General todo
+General Todo
 ------------
 
+ - Add utilitarian trolley problems, ask if it makes the player feel uncomfortable.
+ - Add some deontological conflicts
+ - Add a way to switch between deont track and util track
+ - modify convos based on if they've picked certain things before.
+
+Someday
+-------
+
  - Euthyphro dilemma
+ - If they didn't see the first "why philosophy, add another one"
+ - Work on "more probabalism"
 
 Problems for Deont:
 -------------------
@@ -14,10 +24,20 @@ Problems for Deont:
 Problems for Utilitarian
 ------------------------
  
-  - How do we define the moral community?
   - Fat Man & Surgeon problems
+  - How do we define the moral community?
+  - What is good?
+  - Utility fonts / utility sink
+  - Probabilism?
 
 Questions
 ---------
 
 How do we allow for moments of self reflection / slow the player down.
+
+Housekeeping
+------------
+
+ - Dask shouldn't use contractions, Inim should
+ - Change post trolley rationalizing, maybe remove entirely
+ - No humans were harmed in the making of this *game*??

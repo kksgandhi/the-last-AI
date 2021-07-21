@@ -1,8 +1,10 @@
 type utterance = {
-    readonly speaker:        string,
-    readonly text:           string
-    readonly showUtterance?: () => boolean,
-    readonly dynamicText?:   () => string,
+    readonly speaker:          string,
+    readonly text:             string
+    readonly showUtterance?:   () => boolean,
+    readonly dynamicText?:     () => string,
+    readonly noTypewriter?:    boolean,
+    readonly additionalDelay?: () => number,
 }
 
 type link = {
@@ -48,16 +50,16 @@ let scrollToBottom = () => window.scrollTo({ top: document.body.scrollHeight, be
 
 // whether you are using typewriter passage rendering or not, the links are rendered in the same way through this function.
 let renderLinksGeneric = (main: Element, passage: passage) => {
-    // No links in the passage? Check for an autolink
-    if (passage.links.length === 0) {
+    // Check for an autolink
+    let autoLinkTarget = passage.autoLink?.();
+    if (autoLinkTarget) {
         passage.onExit?.();
         onAnyExit(passage);
-        // and go there if an autolink is found
-        if ('autoLink' in passage) renderPassageGeneric(getPassage(passage.autoLink!()));
-        else console.warn("Links were empty and there was no autolink. Is this the end of your story or did you mess up somewhere?");
+        // if it exists, go there
+        renderPassageGeneric(getPassage(autoLinkTarget));
     }
     else {
-        // Oh there are links? Let's insert them
+        // Autolink didn't exist or returned an empty string, let's render the links
         passage.links.forEach(link => {
             // render the link only if the link has no "showLink" hook or if the showLink hook passes
             if (!('showLink' in link) || link.showLink!()) {
@@ -101,24 +103,30 @@ let renderLinksGeneric = (main: Element, passage: passage) => {
     onAnyLinkRender(passage);
 }
 
+let sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // rendering the passage without a typewriter effect
-let renderPassageSimple = (passage: passage) => {
+let renderPassageSimple = async (passage: passage) => {
     let main = document.getElementById("main")!;
     // simple append of all the passages
-    passage.utterances.forEach(utterance => {
+    for (let idx in passage.utterances) {
+        let utterance = passage.utterances[idx];
         // render the utterance only if the utterance has no "showUtterance" hook or if the showUtterance hook passes
         if (!('showUtterance' in utterance) || utterance.showUtterance!()) {
             let utteranceElem = document.createElement("p");
-            utteranceElem.setAttribute("class", utterance.speaker);
+            utteranceElem.setAttribute("class", `${utterance.speaker} fade-in`);
             // Use the dynamic text if it exists, else use the normal text
             utteranceElem.innerHTML = utterance.dynamicText?.() || utterance.text;
             main.appendChild(utteranceElem);
+            // if the passage has additionalDelay, delay that much as well
+            if ('additionalDelay' in utterance) {
+                console.log("ADDITIONAL DELAY NO TYPEWRITER");
+                await sleep(utterance.additionalDelay!());
+            }
         }
-    });
+    }
     renderLinksGeneric(main, passage);
 }
 
-let sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // render passage with a typewriter effect.
 let renderPassageTypewriter = async (passage: passage) => {
     let main = document.getElementById("main")!;
@@ -133,22 +141,31 @@ let renderPassageTypewriter = async (passage: passage) => {
             main.appendChild(utteranceElem);
             // Use the dynamic text if it exists, else use the normal text
             let characters = utterance.dynamicText?.() || utterance.text;
-            // for every character index...
-            for (let charidx = 0; charidx < characters.length; charidx++) {
-                // convert the innerHTML into the substring upto that index
-                utteranceElem.innerHTML = characters.slice(0, charidx + 1);
-                let character = characters[charidx];
-                // if the character was a comma wait a bit
-                if (character === ",") 
-                    await sleep(delayComma * delay);
-                // if the character was other punctuation, wait a bit longer
-                if (".:;!?-".split('').includes(character))
-                    await sleep(delayPunctuation * delay);
-                // wait between characters
-                await sleep(delay);
+            // if noTypewriter, just set it and move on.
+            if (utterance.noTypewriter) {
+                utteranceElem.innerHTML = characters;
+                utteranceElem.setAttribute("class", `${utterance.speaker} fade-in`);
             }
+            else
+                // for every character index...
+                for (let charidx = 0; charidx < characters.length; charidx++) {
+                    // convert the innerHTML into the substring upto that index
+                    utteranceElem.innerHTML = characters.slice(0, charidx + 1);
+                    let character = characters[charidx];
+                    // if the character was a comma wait a bit
+                    if (character === ",") 
+                        await sleep(delayComma * delay);
+                    // if the character was other punctuation, wait a bit longer
+                    if (".:;!?-".split('').includes(character))
+                        await sleep(delayPunctuation * delay);
+                    // wait between characters
+                    await sleep(delay);
+                }
             // wait between speakers
             await sleep(delay * delayBetweenSpeakers);
+            // if the passage has additionalDelay, delay that much as well
+            if ('additionalDelay' in utterance)
+                await sleep(utterance.additionalDelay!());
             scrollToBottom();
         }
     }

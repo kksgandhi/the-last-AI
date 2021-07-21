@@ -1,12 +1,4 @@
-.unclicked {
-	opacity: 1;
-	animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 0.5s;
-}
-
-p {
+.unclicked, .fade-in {
 	opacity: 1;
 	animation-name: fadeInOpacity;
 	animation-iteration-count: 1;
@@ -29,6 +21,11 @@ p, a {
 
 a {
     cursor: pointer;
+    color: #268bd2;
+}
+
+a:hover {
+    color: #6c71c4;
 }
 
 #colorSchemeChanger {
