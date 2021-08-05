@@ -2,3 +2,5 @@
 *.js
 outline/.obsidian/*
 outline/.trash/*
+release/*
+release.zip

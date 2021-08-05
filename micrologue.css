@@ -33,3 +33,9 @@ a:hover {
     float:   right;
     cursor:  pointer;
 }
+
+#saveIcon {
+    display: inline;
+    float:   right;
+    cursor:  pointer;
+}

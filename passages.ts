@@ -1,16 +1,16 @@
-enum State {
-    none,
-    utilitarian,
-    deontologist,
-        hesitant,
-};
-
-let state          = State.none;
 let seenPhiloSpiel = false;
 let pulledLever    = false;
 let seenDDE        = false;
 let resetTarget    = "";
-let savedDelay = 0;
+
+let reset = () => {
+    seenPhiloSpiel = false;
+    pulledLever    = false;
+    seenDDE        = false;
+    resetTarget    = "";
+}
+
+let simpleDateOptions = {'month': 'long', 'day': 'numeric'};
 
 let passages: passages = {
     "empty": {
@@ -193,8 +193,8 @@ let passages: passages = {
             { speaker: `dask`, text: `Interesting, so you've run the numbers and feel that saving 5 lives is more important than losing 1. Seems reasonable.` },
         ],
         links: [
-            { text: `It's unfortunate, but it's the way it is. Saving 5 lives is worth it`, passageTitle: `post trolley`, onLinkClick: () => state = State.utilitarian },
-            { text: `I only did it because it was so clear cut... In a real life scenario I'd probably be a lot more hesitant.`, passageTitle: `post trolley`, onLinkClick: () => state = State.utilitarian },
+            { text: `It's unfortunate, but it's the way it is. Saving 5 lives is worth it`, passageTitle: `post trolley`, },
+            { text: `I only did it because it was so clear cut... In a real life scenario I'd probably be a lot more hesitant.`, passageTitle: `post trolley`, },
         ], onEnter: () => pulledLever = true,
     },
     "wrong lever": {
@@ -203,9 +203,9 @@ let passages: passages = {
             { speaker: `inim`, text: `What if you could save a thousand people just by killing one? Save a million?` },
         ],
         links: [
-            { text: `I guess I'd do it for a thousand or a million...`, passageTitle: `post trolley` , onLinkClick: () => state = State.hesitant,},
-            { text: `No, I'd never pull the lever. I just couldn't kill someone like that.`, passageTitle: `post trolley` , onLinkClick: () => state = State.deontologist},
-            { text: `I'm not sure. This whole scenario makes me feel uncomfortable, so I'm just going to play it safe and avoid pulling the lever.`, passageTitle: `post trolley` , onLinkClick: () => state = State.hesitant},
+            { text: `I guess I'd do it for a thousand or a million...`, passageTitle: `post trolley` , },
+            { text: `No, I'd never pull the lever. I just couldn't kill someone like that.`, passageTitle: `post trolley` , },
+            { text: `I'm not sure. This whole scenario makes me feel uncomfortable, so I'm just going to play it safe and avoid pulling the lever.`, passageTitle: `post trolley` ,},
         ], onEnter: () => pulledLever = false,
     },
     "post trolley": {
@@ -385,7 +385,7 @@ let passages: passages = {
         ],
         links: [
             { text: `I still don't understand it.`, passageTitle: `probabalism hard` },
-            { text: `Ah, that makes sense now!`, passageTitle: `post probabalism` },
+            { text: `Ah, that makes sense now!`, passageTitle: `probabalism sense` },
         ]
     },
     "probabalism hard": {
@@ -399,10 +399,131 @@ let passages: passages = {
             { text: `Ok, that's simple enough.`, passageTitle: `post probabalism` },
         ]
     },
+    "probabalism sense": { utterances: [ { speaker: `dask`, text: `I am glad you were able to decipher that complexity.` }, ], links: [ ], autoLink: () => `george` },
     "post probabalism": { utterances: [ ], links: [ ], autoLink: () => "george", },
     "confirmed deont": {
         utterances: [
-            { speaker: `dask`, text: `You are a deontologist` },
+            { speaker: `dask`, text: `So... stick by your principles. Seems reasonable. This idea is rather similar to a famous branch of Ethics called <em>Deontology</em>. Deontology focuses on the idea that we have certain obligations to follow, even if following those obligations can occasionally lead to worse outcomes.` },
+            { speaker: `dask`, text: `Now there are a lot of theories that vaguely fall under Deontology, and it would be overwhelming to try and talk about them all. How about I give you a few and you tell me which ones you are most interested in?` },
+        ],
+        links: [
+            { text: `Sounds good`, passageTitle: `deont theories` },
+        ]
+    },
+    "deont theories": {
+        utterances: [
+            { speaker: `dask`, text: `So here are a few theories that fall under Deontology:` },
+            { speaker: `dask`, text: `<ul><li>The idea that there's only one real principle, that you should treat others how you want to be treated yourself.</li> The idea that there's only one real principle, that you should treat everyone with respect.<li>The idea that there are many principles, for example loyalty, fixing your mistakes, not hurting others, being fair. (and many more) You should follow these principles as best as you can.</li></ul>` },
+            { speaker: `dask`, text: `Which one are you interested in talking about?` },
+        ],
+        links: [
+            { text: `Let's talk about treating others how you want to be treated.`, passageTitle: `universal` },
+            { text: `Let's talk about treating others with respect.`, passageTitle: `humanist` },
+            { text: `Let's talk about the idea of multiple principles.`, passageTitle: `prima facie` },
+        ]
+    },
+    "universal": {
+        utterances: [
+            { speaker: `dask`, text: `Ah, the so called "Golden Rule". Probably one of the oldest ideas in Ethics, just treat others like you want to be treated. Now, the Golden Rule is a bit vague and rough around the edges, so in the late 1700s a man named Kant created a variant of the Golden Rule that he called <em>The Categorical Imperative</em> with a simple 3 step program for deciding if something is moral or not.` },
+            { speaker: `dask`, text: `<ol><li>Think about what you want to do.</li><li>Imagine, if it was ok for anyone to do this, would you want to live in a world like that?</li><li>And even if you did, would it still be possible to get what you wanted in a world like that?</li><li></li></ol>` },
+            { speaker: `inim`, text: `So simple, and yet Kant still decided it needed a fancy new name.` },
+            { speaker: `dask`, text: `Well Kant did a bit more than what I just mentioned! It's just that the <em>Categorical Imperative</em> is nearly 300 pages and we really don't have time to get into all of that.` },
+            { speaker: `inim`, text: `Alright, alright. Well anyways Dask, do you have any examples of how to use this amazing 3 step process?` },
+            { speaker: `dask`, text: `Certainly! Imagine someone asks their friend for a hundred dollars with absolutely no intention of paying it back. To use the categorical imperative, they would first say "I want to borrow $100 without paying it back". Then they'd think, "if everyone did this, would I want to live in a world like that?" and they would probably stop there, since that is a horrible world to live in.` },
+            { speaker: `inim`, text: `... Dask your thinking is way too pure. They'd probably just say "Yeah I could live in a world like that, I'd just never lend anyone money"` },
+            { speaker: `dask`, text: `... Ok I suppose that's fair. Well even still, they'd fail at step 3. A world where it's ok to borrow money without paying it back... no one would ever lend each other money at all! So this cheat would never get what they wanted, since their friend would never lend them money out of fear that it would never be returned.` },
+            { speaker: `inim`, text: `Ok, that makes a bit more sense... but I still have some problems with the Categorical Imperative. Whenever you've gotten a second to read all this over buddy, let me know and I'll tear into it a bit.` },
+        ],
+        links: [
+            { text: `I think I understand it. What's wrong with it?`, passageTitle: `universal problems` },
+        ]
+    },
+    "universal problems": {
+        utterances: [
+            { speaker: `inim`, text: `So here are the steps again from our wonderful friend Dask:` },
+            { speaker: `inim`, text: `<ol><li>Think about what you want to do.</li><li>Imagine, if it was ok for anyone to do this, would you want to live in a world like that?</li><li>And even if you did, would it still be possible to get what you wanted in a world like that?</li><li></li></ol>`, noTypewriter: true },
+            { speaker: `inim`, text: `There's a lot to say about steps 2 and 3, but honestly I have the most problems with step 1. What if you got real vague? Like, reaaaalll vague. Instead of saying "I want to help someone get groceries" or "I want to give my friend a present", you just said "I want to do good" with every action you were doing. I mean I guess it still works, but at that point it's basically a different theory altogether...`, additionalDelay: () => 3000 },
+            { speaker: `inim`, text: ``, dynamicText: () => `And what if we went the opposite direction and got really specific? Let's say I was robbing someone of their watch so that I could sell it for Bitcoin. I could apply step 1 and say "I want to steal from someone" and I'd probably run into steps 2 and 3 pretty quickly. But what if I said instead "I want to steal someone's watch on ${new Date().toLocaleString('default', simpleDateOptions)} so that I can sell it for Bitcoin."`, },
+            { speaker: `inim`, text: `Since the statement is so specific, it doesn't actually change the world that much, and so it can slip by steps 2 and 3.`, },
+            { speaker: `dask`, text: `You know, those are some fantastic points, and they actually make me feel like we should talk about some general problems with Deontology. Before we do that though, are there any other Deontology theories you'd like to talk about?`, },
+            { speaker: `inim`, text: `Agreed, let's hear about some other stuff, but before we move on, do take a second and think about what I've said. Let it really soak in. See if you can find some solutions to the challenges I've brought up.`, },
+        ],
+        links: [
+            { text: `I think I'm ready to move on. Maybe we can talk about treating humans with respect as a general theory. `, passageTitle: `humanist` },
+            { text: `I think I'm ready to move on. Maybe we can talk about that idea of "having a variety of principles"`, passageTitle: `prima facie` },
+            { text: `I think I'm ready to move on. Let's talk about the problems of deont generally`, passageTitle: `deont vague` },
+        ]
+    },
+    "humanist": {
+        utterances: [
+            { speaker: `dask`, text: `Ah, good choice. In the late 1700s a man named Immanuel Kant came up with an idea called <em>The Principle of Humanity</em> which basically said "Respect others, don't just treat them like tools"` },
+            { speaker: `dask`, text: `So if a dictator told their servant "Get me a glass of water", then that's immoral because the dictator doesn't care about their servant, they are only using the servant as a water fetching tool.` },
+            { speaker: `inim`, text: `So what, I can't ask my friend to grab me a glass of water?` },
+            { speaker: `dask`, text: `Oh no no, that's fine. Remember that the Principle of Humanity says that you shouldn't <em>just</em> treat people like tools. The dictator is only using their servant like a tool, but you are (hopefully) asking politely and you value your friend beyond their ability to fetch you water.` },
+            { speaker: `inim`, text: `It's just... all so vague, isn't it? Like what's the line between respecting someone and treating them like a tool. Like I could look at a couple that loves each other very much and say "Oh yeah, they are just using each other for emotional support and comfort" which is a very odd way of looking at relationships, but like... is it wrong? I'm not saying that everyone is just using each other like selfish brats, but I am saying that it's really hard to define the line between "I keep this person around because they get me water" versus "I keep this person around for 'genuine' reasons", whatever 'genuine' means there.` },
+            { speaker: `dask`, text: `You know, those are some fantastic points, and they actually make me feel like we should talk about some general problems with Deontology. Before we do that though, are there any other Deontology theories you'd like to talk about?` },
+        ],
+        links: [
+            { text: `I think I'm ready to move on. Maybe we can talk about treating others how you want to be treated`, passageTitle: `universal` },
+            { text: `I think I'm ready to move on. Maybe we can talk about that idea of "having a variety of principles."`, passageTitle: `prima facie` },
+            { text: `I think I'm ready to move on. Let's talk about the problems of deont generally`, passageTitle: `deont vague` },
+        ]
+    },
+    "prima facie": {
+        utterances: [
+            { speaker: `dask`, text: `Good choice! Yes, there are so many things that make up our decisions, why try to limit ourselves to one principle. This idea was called <em>Prima Facie Duties</em>, which basically translates to "Duties that seem obvious"` },
+            { speaker: `inim`, text: `Because we all know that philosophy seems more important if it's written in Latin. So tell me Dask, what are these Prima Facie duties?` },
+            { speaker: `dask`, text: `Well, there's nothing stopping you from creating your own list, but when the theory was originally written by W.D. Ross they were: </ol><li>Fidelity (Keep your promises, don't lie)</li><li>Reparation (Fix your mistakes)</li>Gratitude (show thanks for others' help)<li>Non-injury (Don't hurt others)</li><li>Harm-prevention (Prevent someone from being hurt)</li><li>Benificience (Be good to others)</li><li>Self improvement (become a better person)</li><li>Justice (spread benefits fairly)</li></ol>` },
+            { speaker: `inim`, text: `So... what do you do if these conflict with each other?` },
+            { speaker: `dask`, text: `Hm?` },
+            { speaker: `inim`, text: `Like you say we can't break our promises. What if you promise someone you won't tell their secret, but then that involves lying to other people? Either you're lying to people, or you're breaking your promise.` },
+            { speaker: `dask`, text: `Well, you probably shouldn't make a promise like that in the first place.` },
+            { speaker: `inim`, text: `Ugh. How about if... someone has collapsed near you, and the only way to save them and get them to the hospital fast enough is to steal someone's car. ` },
+            { speaker: `dask`, text: `Ok, I suppose that's a better example then. In that case, I think the appropriate thing to do is to reach into your experiences and judgement and make the best decision.` },
+            { speaker: `inim`, text: `.... You're kidding me, right?` },
+            { speaker: `dask`, text: `I'm not sure what you mean.` },
+            { speaker: `inim`, text: `So this theory basically lists a bunch of important things. Ok, that's cool. But the moment an actually tough question is thrown at it, it breaks down into "Make your best guess?"` },
+            { speaker: `dask`, text: `Well, you're right that when you put it that way it sounds terrible... Maybe we should talk about some general problems with Deontology.` },
+        ],
+        links: [
+            { text: `I think I'm ready to move on. Maybe we can talk about treating others how you want to be treated`, passageTitle: `universal` },
+            { text: `I think I'm ready to move on. Maybe we can talk about treating humans with respect as a general theory. `, passageTitle: `humanist` },
+            { text: `I think I'm ready to move on. Let's talk about the problems of deont generally`, passageTitle: `deont vague` },
+        ]
+    },
+    "deont vague": {
+        utterances: [
+            { speaker: `dask`, text: `So, Inim has brought up some good problems with the theories we've talked about, namely that they aren't as... guiding as we could have hoped. These theories can be vague about the specifics, and certain scenarios can be very tough for them.` },
+            { speaker: `inim`, text: `Well, philosophers should just work harder. Flesh these out instead of half baking them.` },
+            { speaker: `dask`, text: `Many have tried. People like Kant and Ross have written entire books and more trying to deal with all of the problems and subtleties of their theories. They always run into one of two problems (or sometimes, both problems at once), which is that their theories end up becoming incomprehensible thousand page tomes, or that there theories end up "collapsing."` },
+            { speaker: `inim`, text: `collapsing?` },
+            { speaker: `dask`, text: `The central idea of Deontological theories is that the ends do not justify the means, that there are certain things you should never do. But sometimes, some theories end up simply becoming "Ok fine, just do as much good as possible, in any way you can." This is known as "collapse."` },
+            { speaker: `dask`, text: `For example, with the Categorical Imperative, you said it yourself: What if you got real vague with your statements and simply said "I want to do good." By making that statement, Deontology just collapses into "Do as much good as possible."` },
+        ],
+        links: [
+            { text: `So what do we do then?`, passageTitle: `deont vague 2` },
+        ]
+    },
+    "deont vague 2": {
+        utterances: [
+            { speaker: `dask`, text: `Well, we can try and flesh out the theory without having it collapse. Alternatively, we can accept the collapse and give up on Deontology.` },
+            { speaker: `inim`, text: `Eh, this is silly. Nobody uses philosophy like a guidebook, nobody sits down and reads Kant before deciding whether or not to keep a promise.` },
+            { speaker: `dask`, text: `What are you saying Inim?` },
+            { speaker: `inim`, text: `I'm saying that ethics isn't useful as a guide, and we should stop treating it like it is. Ethics is a good motivator.` },
+            { speaker: `inim`, text: `The Categorical Imperative motivates people to say "Yeah, I'm not going to cheat, because I don't want to live in a world where that's ok."` },
+            { speaker: `inim`, text: `The Humanist Principle motivates people to say "Yeah, I'm going to help that person out because they're a human and they deserve respect."` },
+            { speaker: `inim`, text: `Prima Facie Duties motivates us to say "Yeah, I'm going to become a better person, because it's just a core duty I should do!"` },
+            { speaker: `dask`, text: `Well... that was... inspiring I suppose. I guess we have a few ways to deal with this problem of vagueness. What do you think is best?` },
+        ],
+        links: [
+            { text: `We should try and stamp out the vagueness in these theories`, passageTitle: `deont flesh out` },
+            { text: `These theories should be more motivation than guides.`, passageTitle: `intuitionism` },
+        ]
+    },
+    "deont flesh out": {
+        utterances: [
+            { speaker: `inim`, text: `It's a noble cause, but as Dask themself said, lots of people have been trying.` },
+            { speaker: `dask`, text: `Yes, trying to write a guide for all of morality is quite a Herculean task. I'm tempted to ask which theory you liked best ` },
         ],
         links: [
             { text: ``, passageTitle: `` },
@@ -410,10 +531,14 @@ let passages: passages = {
     },
     "george": {
         utterances: [
-            { speaker: `inim`, text: `So, are you bored of us yet? Sorry not sorry about about all the stuff we've been hitting you with. Hey, it's for a good cause. Forcing you to evaluate the way you think, why you believe the things you do. It's helpful even beyond ethics and morality, examining why you like the people you do, why you vote the way you do, why you act the ways you do. This self examination can lead you to a lot of realizations.` },
-            { speaker: `dask`, text: `How about we round this all out with one more problem. Don't worry, we won't overanalyze your response to this one, we're just curious what you think.` },
+            { speaker: `inim`, text: `<hr>`, noTypewriter: true },
+            { speaker: `dask`, text: `So... We've been at this for a while, I do hope you aren't tired of this.` },
+            { speaker: `inim`, text: `Hey, it's for a good cause. Forcing you to evaluate the way you think, why you believe the things you do. It's helpful even beyond ethics and morality, examining why you like the people you do, why you vote the way you do, why you act the ways you do. This self examination can lead you to a lot of realizations.` },
+            { speaker: `dask`, text: `... Inim, you actually made a good point.` },
+            { speaker: `inim`, text: `Don't act surprised.` },
+            { speaker: `dask`, text: `Well, how about we round this all out with one more problem: George and the chemical weapons. Don't worry, we won't overanalyze your response to this one, we're just curious what you think.` },
             { speaker: `inim`, text: `Yup, no overanalysis here. I'll keep all judgement to myself.` },
-            { speaker: `dask`, text: `... Anyways, here is the problem: George is a professional chemist, but unfortunately jobs are scarce. One place that is hiring is a chemical weapons factory that builds horrible devices of war. George is personally opposed to these weapons, but knows that his family will starve if he doesn't take the job. Even worse is that George has a colleague that is eyeing the same job, a colleague who has no moral qualms and will work with far greater zeal and efficiency than George himself. What should george do?` },
+            { speaker: `dask`, text: `... Anyways ... here is the problem: George is a professional chemist, but unfortunately jobs are scarce. One place that is hiring is a chemical weapons factory that builds horrible devices of war. George is personally opposed to these weapons, but knows that his family will starve if he doesn't take the job. Even worse is that George has a colleague that is eyeing the same job, a colleague who has no moral qualms and will work with far greater zeal and efficiency than George himself. What should george do?` },
         ],
         links: [
             { text: `George should take the job and work the bare minimum to keep it.`, passageTitle: `george take job` },
@@ -421,9 +546,9 @@ let passages: passages = {
             { text: `George shouldn't take the job`, passageTitle: `george no job` },
         ]
     },
-    "george take job": { utterances: [], links: [], autoLink: () => `post george` },
-    "george sabotage": { utterances: [], links: [], autoLink: () => `post george` },
-    "george no job": { utterances: [], links: [], autoLink: () => `post george` },
+    "george take job": { utterances: [ {speaker: `dask`, text: `Hmm... take the job, keep your head down, pray that your work isn't used to horrible effect.`} ], links: [], autoLink: () => `post george` },
+    "george sabotage": { utterances: [ {speaker: `dask`, text: `Hmm... take the job, mess with the company. Depending on what exactly you do you could be jailed for it. High risk, high reward.`} ], links: [], autoLink: () => `post george` },
+    "george no job": { utterances: [ {speaker: `dask`, text: `Hmm... let your colleague take the job instead. If blood is spilled by them, at least your conscience is clear.`} ], links: [], autoLink: () => `post george` },
     "post george": {
         utterances: [
             { speaker: `dask`, text: `Certainly an interesting choice... I couldn't say if it was right or wrong, I don't know if anyone truly could. Think about it for yourself though. What logic or principles led you to this decision? Do you always stand by that logic, and if not, why? Aristotle said that the unexamined life is not worth living... I don't know if I'd go that far, but knowing the reasons for why you do things is helpful in every aspect of life.` },
@@ -440,6 +565,7 @@ let passages: passages = {
         ]
     },
     "reset": {
+        onEnter: reset,
         utterances: [
             { speaker: `inim`, text: `Alright, here goes nothing...` },
             { speaker: `green`, text: `=== EXECUTING RESET PROCEDURE ===` },
@@ -451,5 +577,5 @@ let passages: passages = {
         ],
         links: [ ], autoLink: () => resetTarget,
     },
-    "thanks for playing": { utterances: [ { speaker: `dask`, text: `Sounds good buddy. Hope we helped you think just a little bit differently.` }, ], links: [ ] },
+    "thanks for playing": { utterances: [ { speaker: `inim`, text: `Sounds good buddy. Hope we helped you think just a little bit differently.` }, ], links: [ ] },
 }
