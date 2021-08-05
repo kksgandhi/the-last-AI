@@ -21,9 +21,16 @@ let delayComma = 3;
 // Multiply this by baseDelay to get the number of milliseconds waited after punctuation (.:;!?-)
 let delayPunctuation = 7;
 
+let saveInfo = "";
+let existsUnsavedInfo = false;
 // JS hooks
 // runs on entering any passage
-let onAnyEnter      = (passage: passage) => console.log(`Entering ${getPassageTitle(passage)}`)
+let onAnyEnter      = (passage: passage) => {
+    let passageTitle = getPassageTitle(passage);
+    console.log(`Entering ${passageTitle}`)
+    saveInfo += `${passageTitle}|`
+    existsUnsavedInfo = true;
+}
 // runs on exiting any passage
 let onAnyExit       = (passage: passage) => console.log(`Exiting ${getPassageTitle(passage)}`)
 // runs on the links rendering for any passage

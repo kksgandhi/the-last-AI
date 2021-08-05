@@ -266,21 +266,21 @@ document.title = title;
 
 let saveIcon = document.getElementById("saveIcon")!;
 saveIcon.onclick = () => {
-    downloadToFile("POTATO", "last-AI-progress.txt", "text/plain");
+    downloadToFile(saveInfo, "last-AI-progress.txt", "text/plain");
+    existsUnsavedInfo = false;
 };
 
 const downloadToFile = (content: string, filename: string, contentType: string) => {
-  const a = document.createElement('a');
-  const file = new Blob([content], {type: contentType});
-  
-  a.href= URL.createObjectURL(file);
-  a.download = filename;
-  a.click();
+    const a = document.createElement('a');
+    const file = new Blob([content], {type: contentType});
 
-	URL.revokeObjectURL(a.href);
+    a.href= URL.createObjectURL(file);
+    a.download = filename;
+    a.click();
+
+    URL.revokeObjectURL(a.href);
 };
 
 window.onbeforeunload = function (){
-    // downloadToFile("aaaa", 'my-new-file.txt', 'text/plain');
-    return "Before leaving, sex my dick";
+    return existsUnsavedInfo ? "Unsaved Information, please save" : null;
 };
