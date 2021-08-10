@@ -12,4 +12,5 @@ release:
 	tsc -p .
 	cp *.js *.css *.html release/
 	cp -r imgs/ release/
+	cp -r reviewers/ release/
 	zip -r release.zip release/

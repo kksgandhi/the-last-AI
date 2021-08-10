@@ -3,8 +3,8 @@ This project is intended to serve as a platform for research on philosophical vi
 
 ## Game Goals
 
- - Teach normative ethics
  - Teach critical thinking (defined here as an ability to challenge the assumptions one lives by)
+ - Teach normative ethics
  - Encourage philosophical thought
  - Instill an appreciation for philosophy
 

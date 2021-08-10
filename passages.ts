@@ -216,8 +216,8 @@ let passages: passages = {
         ],
         links: [
             { text: `What do you mean by principles? Isn't "Do as much good as possible" a principle itself?`, passageTitle: `what are principles` },
-            { text: `Principles are important. Some people who think they are doing good end up doing more harm`, passageTitle: ``, dynamicReference: () => pulledLever ? "conflicted util" : "confirmed deont"  },
-            { text: `Principles are good and all, but just generally doing good is the most important thing.`, passageTitle: ``, dynamicReference: () => pulledLever ? "confirmed util" : "conflicted deont" },
+            { text: `Principles are important. Some people who think they are doing good end up doing more harm`, passageTitle: ``, dynamicReference: () => pulledLever ? "conflicted util" : "confirmed deont", ignoreDebug: true  },
+            { text: `Principles are good and all, but just generally doing good is the most important thing.`, passageTitle: ``, dynamicReference: () => pulledLever ? "confirmed util" : "conflicted deont" , ignoreDebug: true},
         ]
     },
     "what are principles": {
@@ -225,11 +225,12 @@ let passages: passages = {
             { speaker: `dask`, text: `You are right, principles is an ill defined term here... Perhaps some examples of what we think of as principles will help with Inim's question: Loyalty, never lying, never killing, showing gratitude... There are a lot more obviously, but we can keep it short. I think most would agree that these principles are good to have, but sometimes they could get in the way of doing good. What if you strongly held the principle that you should be loyal, but then found yourself in a situation where breaking a promise would lead to a better outcome?` },
         ],
         links: [
-            { text: `Yeah, I have some principles that are incredibly important to me. If I thought I would do more good by breaking them, I'd probably just be wrong...`, passageTitle: ``, dynamicReference: () => pulledLever ? "conflicted util" : "confirmed deont"   },
-            { text: `I still believe that doing the most good possible is more important.`, passageTitle: ``, dynamicReference: () => pulledLever ? "confirmed util" : "conflicted deont"  },
+            { text: `Yeah, I have some principles that are incredibly important to me. If I thought I would do more good by breaking them, I'd probably just be wrong...`, passageTitle: ``, dynamicReference: () => pulledLever ? "conflicted util" : "confirmed deont", ignoreDebug: true },
+            { text: `I still believe that doing the most good possible is more important.`, passageTitle: ``, dynamicReference: () => pulledLever ? "confirmed util" : "conflicted deont", ignoreDebug: true  },
         ]
     },
     "conflicted util": {
+        ignoreDebug: true,
         utterances: [
             { speaker: `inim`, text: `So, you think that there are some principles you should never violate. I hope "Never murder" is on that list of principles... but at the same time, you pulled the lever and killed one person. Don't you feel like there's a conflict here? Don't you feel like you broke one of your principles in order to save the other 5?` },
         ],
@@ -265,6 +266,7 @@ let passages: passages = {
         links: [ ], autoLink: () => `confirmed util`,
     },
     "conflicted deont": {
+        ignoreDebug: true,
         utterances: [
             { speaker: `inim`, text: `So, you want to do as much good as possible. I hope that "saving lives" is something you consider doing good... But when you didn't pull the lever, you doomed those 5 people. Do you feel like there's a contradiction here? ` },
         ],
@@ -523,11 +525,16 @@ let passages: passages = {
     "deont flesh out": {
         utterances: [
             { speaker: `inim`, text: `It's a noble cause, but as Dask themself said, lots of people have been trying.` },
-            { speaker: `dask`, text: `Yes, trying to write a guide for all of morality is quite a Herculean task. I'm tempted to ask which theory you liked best ` },
+            { speaker: `dask`, text: `Yes, trying to write a guide for all of morality is quite a Herculean task. I'm tempted to ask which theory you liked best and really dive into that, but perhaps we should move on somewhat.`, additionalDelay: () => 2000 },
         ],
-        links: [
-            { text: ``, passageTitle: `` },
-        ]
+        links: [], autoLink: () => "george"
+    },
+    "intuitionism": {
+        utterances: [
+            { speaker: `inim`, text: `Agreed! All these philosophers have to get off their high horses and stop assuming they can figure everything out. Maybe some perfect guide to morality exists somewhere, but with our limited brainpower, the best we can do is just keep it simple and use Ethics as inspiration, not as a concrete guidebook.` },
+            { speaker: `dask`, text: `I can't deny that this idea makes me uncomfortable. Ideally, we should be able to justify everything we do. Yes, trying to deal with an incredibly complex set of rules can be scary, but so is the idea of someone doing something without any reasoning for it at all. While I could talk about this idea more, perhaps we should move on a bit.`, additionalDelay: () => 2000 },
+        ],
+        links: [], autoLink: () => "george"
     },
     "george": {
         utterances: [

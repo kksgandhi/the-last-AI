@@ -39,3 +39,8 @@ a:hover {
     float:   right;
     cursor:  pointer;
 }
+
+.tooltip {
+    display:inline;
+    color:#93a1a1;
+}

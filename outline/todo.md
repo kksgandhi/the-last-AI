@@ -1,6 +1,10 @@
 General Todo
 ------------
 
+ - Broken <li> in "few theories that fall under Deontology"
+ - Extra <li> in categorical imperative
+ - Broken after reset procedure
+ - Your communication protocol is limited
  - Add deont to George link
  - Rethink post trolley, pre division
  - Ends justify the means instead of doing good
