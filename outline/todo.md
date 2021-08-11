@@ -1,21 +1,20 @@
 General Todo
 ------------
 
- - Broken <li> in "few theories that fall under Deontology"
- - Extra <li> in categorical imperative
- - Broken after reset procedure
- - Your communication protocol is limited
- - Add deont to George link
- - Rethink post trolley, pre division
  - Ends justify the means instead of doing good
  - Make deontology more dynamic
  - Add some deontological conflicts (revisit the trolley problem)
  - talk about how there are other branches of philosophy
  - Add a way to switch between deont track and util track
- - modify convos based on if they've picked certain things before.
+
+Dynamic Tracks
+--------------
+
+ - if player used heuristics, refer to that in Util track
+ - if player saw DDE, refer to that in Deont track
 
 Someday
----------
+-------
 
  - Discussions of ethical community could be part of both
  - Euthyphro dilemma
