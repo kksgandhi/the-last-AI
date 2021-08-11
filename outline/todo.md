@@ -6,6 +6,7 @@ General Todo
  - Add some deontological conflicts (revisit the trolley problem)
  - talk about how there are other branches of philosophy
  - Add a way to switch between deont track and util track
+ - Add randomization to deont tracks?
 
 Dynamic Tracks
 --------------

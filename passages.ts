@@ -10,6 +10,10 @@ let seenCategorical = false;
 let seenHumanist    = false;
 let seenPrimaFacie  = false;
 
+let numDeonts = () => {
+    return [seenCategorical, seenHumanist, seenPrimaFacie].map(Number).reduce((a,b) => a + b);
+}
+
 let reset = () => {
     initialPosition = undefined;
     seenPhiloSpiel  = false;
@@ -23,6 +27,19 @@ let reset = () => {
 }
 
 let simpleDateOptions = {'month': 'long', 'day': 'numeric'};
+
+let daskDeontIntro = () => {
+    switch(numDeonts()){
+        case 0: return "Ah, good choice!"
+        case 1: return "Another interesting theory!"
+        case 2: return "I'm glad you're being so thorough!"
+        default: return "Good choice!"
+    }
+}
+
+let daskAdmitFantasticPoints = () => `${[`You make some good points Inim, and it makes me feel like we should talk about some more general problems with Deontology. Before we do that though, we should probably talk about some other theories`, `More good points Inim. Would you like to talk about the last theory or should we talk about Deontology more generally?`, `You are doing a fantastic job tearing down my ideas Inim. I suppose we should talk about Deontology more generally.`][numDeonts()]}`;
+
+let inimIAmFantastic = () => `${[`Agreed, let's hear about some other stuff. Before we move on though, do take a second and think about what I've said. Let it soak in and see if you can find some solutions to the challenges I've brought up.`, `Happy to help. As I said before, take some time before moving on. Think about it, chew on it.`, `Glad I can be such a thorn in your side. Lemme know when this has soaked in and we should move on bud.`][numDeonts()]} `
 
 let passages: passages = {
     "empty": {
@@ -465,15 +482,17 @@ let passages: passages = {
     "universal": {
         onEnter: () => seenCategorical = true,
         utterances: [
-            { speaker: `dask`, text: `Ah, the so called "Golden Rule". Probably one of the oldest ideas in Ethics, just treat others like you want to be treated. Now, the Golden Rule is a bit vague and rough around the edges, so in the late 1700s a man named Kant created a variant of the Golden Rule that he called <em>The Categorical Imperative</em> with a simple 3 step program for deciding if something is moral or not.` },
+            { speaker: `dask`, dynamicText: daskDeontIntro, text: '' },
+            { speaker: `dask`, dynamicText: () => `The so called "Golden Rule" is probably one of the oldest ideas in Ethics: just treat others like you want to be treated. Now, the Golden Rule is a bit vague and rough around the edges, so ${seenHumanist ? 'our friend Kant' : 'in the late 1700s a man named Immanuel Kant'} created a variant of the Golden Rule that he called <em>The Categorical Imperative</em> with a simple 3 step program for deciding if something is moral or not.`, text: '' },
             { speaker: `dask`, text: `<ol><li>Think about what you want to do.</li><li>Imagine, if it was ok for anyone to do this, would you want to live in a world like that?</li><li>And even if you did, would it still be possible to get what you wanted in a world like that?</li></ol>` },
+            { speaker: `dask`, text: 'Kant also believed that the Categorical Imperative was equivalent to the Principle of Humanity, aka both theories are really saying the same thing.', showUtterance: () => seenHumanist},
             { speaker: `inim`, text: `So simple, and yet Kant still decided it needed a fancy new name.` },
             { speaker: `dask`, text: `Well Kant did a bit more than what I just mentioned! It's just that his books are hundreds of pages and we really don't have time to get into all of that.` },
             { speaker: `inim`, text: `Alright, alright. Well anyways Dask, do you have any examples of how to use this amazing 3 step process?` },
             { speaker: `dask`, text: `Certainly! Imagine someone asks their friend for a hundred dollars with absolutely no intention of paying it back. To use the categorical imperative, they would first say "I want to borrow $100 without paying it back". Then they'd think, "if everyone did this, would I want to live in a world like that?" and they would probably stop there, since that is a horrible world to live in.` },
             { speaker: `inim`, text: `... Dask your thinking is way too pure. They'd probably just say "Yeah I could live in a world like that, I'd just never lend anyone money"` },
             { speaker: `dask`, text: `... Ok I suppose that's fair. Well even still, they'd fail at step 3. A world where it's ok to borrow money without paying it back... no one would ever lend each other money at all! So this cheat would never get what they wanted, since their friend would never lend them money out of fear that it would never be returned.` },
-            { speaker: `inim`, text: `Ok, that makes a bit more sense... but I still have some problems with the Categorical Imperative. Whenever you've gotten a second to read all this over buddy, let me know and I'll tear into it a bit.` },
+            { speaker: `inim`, text: '', dynamicText: () => `Ok, that makes a bit more sense... ${[`I have some other problems with this though.`, `Just like the last theory, I have more problems with this though.`, `As always though, I have more complaints...`][numDeonts()]}` },
         ],
         links: [
             { text: `I think I understand it. What's wrong with it?`, passageTitle: `universal problems` },
@@ -486,37 +505,57 @@ let passages: passages = {
             { speaker: `inim`, text: `There's a lot to say about steps 2 and 3, but honestly I have the most problems with step 1. What if you got real vague? Like, reaaaalll vague. Instead of saying "I want to help someone get groceries" or "I want to give my friend a present", you just said "I want to do good" with every action you were doing. I mean I guess it still works, but at that point it's basically a different theory altogether...`, additionalDelay: () => 3000 },
             { speaker: `inim`, text: ``, dynamicText: () => `And what if we went the opposite direction and got really specific? Let's say I was robbing someone of their watch so that I could sell it for Bitcoin. I could apply step 1 and say "I want to steal from someone" and I'd probably run into steps 2 and 3 pretty quickly. But what if I said instead "I want to steal someone's watch on ${new Date().toLocaleString('default', simpleDateOptions)} so that I can sell it for Bitcoin."`, },
             { speaker: `inim`, text: `Since the statement is so specific, it doesn't actually change the world that much, and so it can slip by steps 2 and 3.`, },
-            { speaker: `dask`, text: `You know, those are some fantastic points, and they actually make me feel like we should talk about some general problems with Deontology. Before we do that though, are there any other Deontology theories you'd like to talk about?`, },
-            { speaker: `inim`, text: `Agreed, let's hear about some other stuff, but before we move on, do take a second and think about what I've said. Let it really soak in. See if you can find some solutions to the challenges I've brought up.`, },
+            { speaker: `dask`, text: ``, dynamicText: daskAdmitFantasticPoints },
+            { speaker: `inim`, text: ``, dynamicText: inimIAmFantastic },
         ],
+        links: [ ], autoLink: () => "post deont theory links"
+    },
+    "post deont theory links": {
+        utterances: [ ],
         links: [
-            { text: `I think I'm ready to move on. Maybe we can talk about treating humans with respect as a general theory. `, passageTitle: `humanist` },
-            { text: `I think I'm ready to move on. Maybe we can talk about that idea of "having a variety of principles"`, passageTitle: `prima facie` },
-            { text: `I think I'm ready to move on. Let's talk about the problems of deont generally`, passageTitle: `deont vague` },
+            { text: `I think I'm ready to move on. Maybe we can talk about treating others how you want to be treated`, passageTitle: `universal` , showLink: () => !seenCategorical},
+            { text: `I think I'm ready to move on. Maybe we can talk about treating humans with respect as a general theory. `, passageTitle: `humanist`, showLink: () => !seenHumanist },
+            { text: `I think I'm ready to move on. Maybe we can talk about that idea of "having a variety of principles"`, passageTitle: `prima facie`, showLink: () => !seenPrimaFacie },
+            { text: `I think I'm ready to move on. Let's talk about the problems of Deontology generally`, passageTitle: `deont vague`, showLink: () => numDeonts() > 1, },
         ]
     },
     "humanist": {
         onEnter: () => seenHumanist = true,
         utterances: [
-            { speaker: `dask`, text: `Ah, good choice. In the late 1700s a man named Immanuel Kant came up with an idea called <em>The Principle of Humanity</em> which basically said "Respect others, don't just treat them like tools"` },
+            { speaker: `dask`, text: ``, dynamicText: daskDeontIntro },
+            { speaker: `dask`, dynamicText: () => `${seenCategorical ? 'So our friend Kant also' : 'So in the late 1700s a man named Immanuel Kant'} came up with an idea called <em>The Principle of Humanity</em> which basically said "Respect others, don't just treat them like tools"`, text: '' },
+            { speaker: `dask`, text: 'Kant also believed that the Principle of Humanity was equivalent to the Categorical Imperative, aka both theories are really saying the same thing.', showUtterance: () => seenCategorical},
             { speaker: `dask`, text: `So if a dictator told their servant "Get me a glass of water", then that's immoral because the dictator doesn't care about their servant, they are only using the servant as a water fetching tool.` },
             { speaker: `inim`, text: `So what, I can't ask my friend to grab me a glass of water?` },
             { speaker: `dask`, text: `Oh no no, that's fine. Remember that the Principle of Humanity says that you shouldn't <em>just</em> treat people like tools. The dictator is only using their servant like a tool, but you are (hopefully) asking politely and you value your friend beyond their ability to fetch you water.` },
+            { speaker: `inim`, text: `Well, I have another concern, whenever we are ready to move on.` },
+        ],
+        links: [
+            { text: `Sure, let's move on`, passageTitle: `humanist 2` },
+        ]
+    },
+    "humanist 2": {
+        utterances: [
             { speaker: `inim`, text: `It's just... all so vague, isn't it? Like what's the line between respecting someone and treating them like a tool. Like I could look at a couple that loves each other very much and say "Oh yeah, they are just using each other for emotional support and comfort" which is a very odd way of looking at relationships, but like... is it wrong? I'm not saying that everyone is just using each other like selfish brats, but I am saying that it's really hard to define the line between "I keep this person around because they get me water" versus "I keep this person around for 'genuine' reasons", whatever 'genuine' means there.` },
             { speaker: `dask`, text: `You know, those are some fantastic points, and they actually make me feel like we should talk about some general problems with Deontology. Before we do that though, are there any other Deontology theories you'd like to talk about?` },
         ],
-        links: [
-            { text: `I think I'm ready to move on. Maybe we can talk about treating others how you want to be treated`, passageTitle: `universal` },
-            { text: `I think I'm ready to move on. Maybe we can talk about that idea of "having a variety of principles."`, passageTitle: `prima facie` },
-            { text: `I think I'm ready to move on. Let's talk about the problems of deont generally`, passageTitle: `deont vague` },
-        ]
+        links: [ ], autoLink: () => "post deont theory links"
     },
     "prima facie": {
         onEnter: () => seenPrimaFacie = true,
         utterances: [
-            { speaker: `dask`, text: `Good choice! Yes, there are so many things that make up our decisions, why try to limit ourselves to one principle. This idea was called <em>Prima Facie Duties</em>, which basically translates to "Duties that seem obvious"` },
+            { speaker: `dask`, text: ``, dynamicText: daskDeontIntro },
+            { speaker: `dask`, text: `There are so many things that make up our decisions, why try to limit ourselves to one principle? This idea was called <em>Prima Facie Duties</em>, which basically translates to "Duties that seem obvious"` },
             { speaker: `inim`, text: `Because we all know that philosophy seems more important if it's written in Latin. So tell me Dask, what are these Prima Facie duties?` },
             { speaker: `dask`, text: `Well, there's nothing stopping you from creating your own list, but when the theory was originally written by W.D. Ross they were: </ol><li>Fidelity (Keep your promises, don't lie)</li><li>Reparation (Fix your mistakes)</li><li>Gratitude (show thanks for others' help)</li><li>Non-injury (Don't hurt others)</li><li>Harm-prevention (Prevent someone from being hurt)</li><li>Benificience (Be good to others)</li><li>Self improvement (become a better person)</li><li>Justice (spread benefits fairly)</li></ol>` },
+            { speaker: `inim`, text: ``, dynamicText: () => `${[`Well I have some thoughts about this, whenever it's soaked in.`, `Just like last time, I have some thoughts. Let me know when we should keep going.`, `As always, I have some thoughts here...`][numDeonts()]}`},
+        ],
+        links: [
+            { text: `This makes sense, let's keep going`, passageTitle: `prima facie 2` },
+        ]
+    },
+    "prima facie 2": {
+        utterances: [
             { speaker: `inim`, text: `So... what do you do if these conflict with each other?` },
             { speaker: `dask`, text: `Hm?` },
             { speaker: `inim`, text: `Like you say we can't break our promises. What if you promise someone you won't tell their secret, but then that involves lying to other people? Either you're lying to people, or you're breaking your promise.` },
@@ -528,11 +567,7 @@ let passages: passages = {
             { speaker: `inim`, text: `So this theory basically lists a bunch of important things. Ok, that's cool. But the moment an actually tough question is thrown at it, it breaks down into "Make your best guess?"` },
             { speaker: `dask`, text: `Well, you're right that when you put it that way it sounds terrible... Maybe we should talk about some general problems with Deontology.` },
         ],
-        links: [
-            { text: `I think I'm ready to move on. Maybe we can talk about treating others how you want to be treated`, passageTitle: `universal` },
-            { text: `I think I'm ready to move on. Maybe we can talk about treating humans with respect as a general theory. `, passageTitle: `humanist` },
-            { text: `I think I'm ready to move on. Let's talk about the problems of deont generally`, passageTitle: `deont vague` },
-        ]
+        links: [ ], autoLink: () => "post deont theory links"
     },
     "deont vague": {
         utterances: [
