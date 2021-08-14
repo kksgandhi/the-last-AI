@@ -10,6 +10,8 @@ let seenCategorical = false;
 let seenHumanist    = false;
 let seenPrimaFacie  = false;
 
+let cockyUtil = false;
+
 let numDeonts = () => {
     return [seenCategorical, seenHumanist, seenPrimaFacie].map(Number).reduce((a,b) => a + b);
 }
@@ -24,22 +26,24 @@ let reset = () => {
     seenCategorical = false;
     seenHumanist    = false;
     seenPrimaFacie  = false;
+
+    cockyUtil = false;
 }
 
 let simpleDateOptions = {'month': 'long', 'day': 'numeric'};
 
 let daskDeontIntro = () => {
     switch(numDeonts()){
-        case 0: return "Ah, good choice!"
-        case 1: return "Another interesting theory!"
-        case 2: return "I'm glad you're being so thorough!"
+        case 1: return "Ah, good choice!"
+        case 2: return "Another interesting theory!"
+        case 3: return "I'm glad you're being so thorough!"
         default: return "Good choice!"
     }
 }
 
-let daskAdmitFantasticPoints = () => `${[`You make some good points Inim, and it makes me feel like we should talk about some more general problems with Deontology. Before we do that though, we should probably talk about some other theories`, `More good points Inim. Would you like to talk about the last theory or should we talk about Deontology more generally?`, `You are doing a fantastic job tearing down my ideas Inim. I suppose we should talk about Deontology more generally.`][numDeonts()]}`;
+let daskAdmitFantasticPoints = () => `${[`You make some good points Inim, and it makes me feel like we should talk about some more general problems with Deontology. Before we do that though, we should probably talk about some other theories`, `More good points Inim. Would you like to talk about the last theory or should we talk about Deontology more generally?`, `You are doing a fantastic job tearing down my ideas Inim. I suppose we should talk about Deontology more generally.`][numDeonts()-1]}`;
 
-let inimIAmFantastic = () => `${[`Agreed, let's hear about some other stuff. Before we move on though, do take a second and think about what I've said. Let it soak in and see if you can find some solutions to the challenges I've brought up.`, `Happy to help. As I said before, take some time before moving on. Think about it, chew on it.`, `Glad I can be such a thorn in your side. Lemme know when this has soaked in and we should move on bud.`][numDeonts()]} `
+let inimIAmFantastic = () => `${[`Agreed, let's hear about some other stuff. Before we move on though, do take a second and think about what I've said. Let it soak in and see if you can find some solutions to the challenges I've brought up.`, `Happy to help. As I said before, take some time before moving on. Think about it, chew on it.`, `Glad I can be such a thorn in your side. Lemme know when this has soaked in and we should move on bud.`][numDeonts()-1]} `
 
 let passages: passages = {
     "empty": {
@@ -195,7 +199,7 @@ let passages: passages = {
         ],
         links: [
             { text: `I'm not sure what you mean by it, can you explain it further?`, passageTitle: `clarify ends` },
-            { text: `I know what it means`, passageTitle: `answer ends` },
+            { text: `I know what it means.`, passageTitle: `answer ends` },
         ]
     },
     "clarify ends": {
@@ -230,8 +234,8 @@ let passages: passages = {
         ],
         links: [
             { text: `I'd pull the lever, saving the 5 is worth the unfortunate loss of the one.`, passageTitle: `pull the lever kronk` },
-            { text: `I wouldn't pull the lever, I couldn't actively harm an innocent`, passageTitle: `wrong lever` },
-            { text: `I'd find some way to save them all`, passageTitle: `save them all` },
+            { text: `I wouldn't pull the lever, I couldn't actively harm an innocent.`, passageTitle: `wrong lever` },
+            { text: `I'd find some way to save them all.`, passageTitle: `save them all` },
         ],
     },
     "save them all": {
@@ -285,10 +289,10 @@ let passages: passages = {
     "conflicted deont": {
         ignoreDebug: true,
         utterances: [
-            { speaker: `inim`, text: `Seems reasonable, maybe, but it doesn't really jive with what you said earlier. You said that the ends never justify the means, but int order to save 5 people like you did you ended up killing one person. Don't you feel like there's a conflict here? Don't you feel like you broke one of your principles in order to save the other 5?` },
+            { speaker: `inim`, text: `Seems reasonable, maybe, but it doesn't really jive with what you said earlier. You said that the ends never justify the means, but in order to save 5 people like you did you ended up killing one person. Don't you feel like there's a conflict here? Don't you feel like you broke one of your principles in order to save the other 5?` },
         ],
         links: [
-            { text: `Someone died because I pulled the lever, but that was an unfortunate side effect. I didn't pull the lever in order to kill them, and so saying I <em>murdered</em> is absurd.`, passageTitle: `not murder` },
+            { text: `Someone died because I pulled the lever, but that was an unfortunate side effect. I didn't pull the lever in order to kill them, and so saying I <em>murdered</em> them is absurd.`, passageTitle: `not murder` },
             { text: `I only did this because the situation was so clear cut. Where it was guaranteed that pulling the lever would do what you said. In a messy, real life scenario with no guarantees, I'd never pull the lever.`, passageTitle: `used heuristics` },
             { text: `You're right, pulling the lever was an act of murder and I regret it. I don't think I'd pull the lever`, passageTitle: `confirmed deont`, onLinkClick: () => pulledLever = false,  },
         ]
@@ -310,6 +314,13 @@ let passages: passages = {
             { text: `You're right, I suppose I did kill that one person. I guess the ends do justify the means.`, passageTitle: `confirmed util` },
             { text: `You're right, and I guess I regret pulling the lever. I've changed my mind, I wouldn't do that if given a second chance.`, passageTitle: `confirmed deont`, onLinkClick: () => pulledLever = false, },
         ], 
+    },
+    "stand by dde": {
+        utterances: [
+            { speaker: `inim`, text: `Very well, I suppose. I still think it's murder, but I don't really have more to say there.` },
+            { speaker: `inim`, text: `<hr>` },
+        ],
+        links: [ ], autoLink: () => `confirmed deont`
     },
     "used heuristics": {
         utterances: [
@@ -363,7 +374,8 @@ let passages: passages = {
     },
     "surgeon problem": {
         utterances: [
-            { speaker: `inim`, text: `Ok, so trolley problem number three... You are a surgeon with 5 terminally ill patients. One has a lung problem, one has a heart problem, etc. You know they'll die soon, but the only way to save their lives are through organ transplants. Now, you identify someone, a rare individual who is an organ match with all five patients. Is it ok to abduct them and harvest their organs to save the other 5?` },
+            { speaker: `inim`, text: `Ok, so trolley problem number three... ` },
+            { speaker: `inim`, text: `You are a surgeon with 5 terminally ill patients. One has a lung problem, one has a heart problem, etc. You know they'll die soon, but the only way to save their lives are through organ transplants. Now, you identify someone, a rare individual who is an organ match with all five patients. Is it ok to abduct them and harvest their organs to save the other 5?` },
             { speaker: `dask`, text: `Inim, this is insane! What if the 5 were heavy smokers or something and this was their fault? It wouldn't make sense to kidnap one person to fix their mistakes?! And the person you are hypothetically kidnapping, what if they have a family? People who will miss them when they're gone?` },
             { speaker: `inim`, text: `Glad you mentioned that, Dask. So let's say that the 5 were reasonable, healthy people that just happened to get super unlucky. Rare diseases, genetic disorders, not their fault. As for whether the person we're abducting has a family, well... the 5 patients all have families too. We can say that all 6 people in this story are basically the same, no one is older or younger, no gender differences, no specific lifestyle differences... Just a bunch of humans.` },
             { speaker: `inim`, text: `So... Still think it's killing the one to save the 5?` },
@@ -388,7 +400,14 @@ let passages: passages = {
         ],
         links: [
             { text: `I still think Utilitarianism is the way to go, but I want to have a discussion because I feel weird.`, passageTitle: `post discomfort pre probabalism` },
+            { text: `Yes. It sounds simple to say "the ends justify the means", but I'm realizing that it has some horrible implications.`, passageTitle: `util to deont` },
         ]
+    },
+    "util to deont": {
+        utterances: [
+            { speaker: `dask`, text: `That's fair. Let's pretend you never pulled that lever and talk about Ethics where the ends don't justify the means.` },
+        ],
+        links: [ ], autoLink: () => `confirmed deont`
     },
     "post discomfort pre probabalism": {
         utterances: [
@@ -404,10 +423,11 @@ let passages: passages = {
             { speaker: `dask`, text: `But this idea makes the original problem more complex. Now it's not "Let me save 5 and kill 1", it's "<em>Maybe</em> I will save 5 and kill 1, or <em>maybe</em> I'll cause mass hysteria and stop people from going to hospitals"` },
             { speaker: `dask`, text: `And these kinds of "maybe" decisions are all around us. Maybe calling someone beautiful will make their day, a good thing, or maybe it will make them feel uncomfortable, a bad thing.` },
             { speaker: `dask`, text: `So a sense of discomfort is important... it's our brain's way of telling us that there might be more to the situation we haven't considered, or that we should think further and not make this decision lightly.` },
+            { speaker: `dask`, text: `I have a bit more to say, but I don't mean to bore you. Would you like to hear it?` },
         ],
         links: [
-            { text: `This is interesting, I want to learn more`, passageTitle: `more probabalism` },
-            { text: `Oh this makes sense!`, passageTitle: `post probabalism` },
+            { text: ``, dynamicText: () => cockyUtil ? `Hm. I guess discomfort does serve a useful purpose. Sure, tell me more about this.`: `This is interesting, I want to learn more!`, passageTitle: `more probabalism` },
+            { text: `This makes sense, let's move on.`, passageTitle: `post probabalism` },
         ]
     },
     "hard util": {
@@ -416,7 +436,7 @@ let passages: passages = {
         ],
         links: [
             { text: `Hesitation is understandable. I do stand by what I said, but I only feel comfortable because this is so obviously a fictional scenario.`, passageTitle: `reasonable hard util` },
-            { text: `It's silly to feel uncomfortable, the moral decision is clear here.`, passageTitle: `cocky hard util` },
+            { text: `Everyone who feels uncomfortable is silly, the moral decision is clear here.`, passageTitle: `cocky hard util` },
         ]
     },
     "reasonable hard util": {
@@ -426,9 +446,18 @@ let passages: passages = {
         links: [ ], autoLink: () => "probabalism"
     },
     "cocky hard util": {
+        onEnter: () => cockyUtil = true,
         utterances: [
-            { speaker: `inim`, text: `Eh... I don't know how I feel about that buddy. There have been a lot of times where one person has been right about something, even if everyone around them has disagreed or felt uncomfortable about their actions... but for every person who's been right, there's been a hundred who've been wrong, and another hundred who've been horribly wrong.` },
-            { speaker: `inim`, text: `If everyone around you is telling you you are wrong, you might still be right, but I think it's a good indication that you should <em>really</em> think about what you're doing, because they may know something you don't.`, additionalDelay: () => 2000 },
+            { speaker: `inim`, text: `Eh... I don't know how I feel about that buddy. Yeah, sometimes people are lone geniuses. People who've figured out something that's true, even if everyone around them is telling them that they are crazy.` },
+            { speaker: `inim`, text: `But for every lone genius, there's a hundred crazy people. People who think they're right against all evidence, who ignore everyone around them, and are simply dead wrong.` },
+            { speaker: `inim`, text: `If everyone around you is telling you that you are wrong, you might still be right, but I think it's a good indication that you should really, <em>really</em> think about what you're doing, because they may know something you don't.`, },
+        ],
+        links: [
+            { text: `Hm`, passageTitle: `cocky hard util 2` },
+        ]
+    },
+    "cocky hard util 2": {
+        utterances: [
             { speaker: `dask`, text: `I think Inim makes a good point. If you'll allow me to soapbox for a minute, I think I have a theory on why these problems make people feel so uncomfortable, and why that discomfort might actually be useful.` },
         ],
         links: [ ], autoLink: () => "probabalism"
@@ -441,8 +470,8 @@ let passages: passages = {
             { speaker: `dask`, text: `If you do the math (<math>90% * 2 > 10% * 5</math>) then it seems that Utilitarianism says that you shouldn't hold the door for them, since the risk that it will be awkward outweighs the slight chance they would really appreciate it.` },
         ],
         links: [
-            { text: `I still don't understand it.`, passageTitle: `probabalism hard` },
-            { text: `Ah, that makes sense now!`, passageTitle: `probabalism sense` },
+            { text: `I don't really understand what you're getting at.`, passageTitle: `probabalism hard` },
+            { text: `Ah, that makes sense!`, passageTitle: `post probabalism` },
         ]
     },
     "probabalism hard": {
@@ -456,8 +485,7 @@ let passages: passages = {
             { text: `Ok, that's simple enough.`, passageTitle: `post probabalism` },
         ]
     },
-    "probabalism sense": { utterances: [ { speaker: `dask`, text: `I am glad you were able to decipher that complexity.` }, ], links: [ ], autoLink: () => `george` },
-    "post probabalism": { utterances: [ ], links: [ ], autoLink: () => "george", },
+    "post probabalism": { utterances: [ { speaker: `dask`, text: `I'm glad I made some sense to you, I know it was a lot!` }, ], links: [ ], autoLink: () => `george` },
     "confirmed deont": {
         utterances: [
             { speaker: `dask`, text: `So... stick by your principles. Avoid doing evil, even if it has a small potential to do good down the line. This idea is rather similar to a famous branch of Ethics called <em>Deontology</em>. Deontology focuses on the idea that we have certain obligations to follow, even if following those obligations can occasionally lead to worse outcomes.` },
@@ -492,7 +520,7 @@ let passages: passages = {
             { speaker: `dask`, text: `Certainly! Imagine someone asks their friend for a hundred dollars with absolutely no intention of paying it back. To use the categorical imperative, they would first say "I want to borrow $100 without paying it back". Then they'd think, "if everyone did this, would I want to live in a world like that?" and they would probably stop there, since that is a horrible world to live in.` },
             { speaker: `inim`, text: `... Dask your thinking is way too pure. They'd probably just say "Yeah I could live in a world like that, I'd just never lend anyone money"` },
             { speaker: `dask`, text: `... Ok I suppose that's fair. Well even still, they'd fail at step 3. A world where it's ok to borrow money without paying it back... no one would ever lend each other money at all! So this cheat would never get what they wanted, since their friend would never lend them money out of fear that it would never be returned.` },
-            { speaker: `inim`, text: '', dynamicText: () => `Ok, that makes a bit more sense... ${[`I have some other problems with this though.`, `Just like the last theory, I have more problems with this though.`, `As always though, I have more complaints...`][numDeonts()]}` },
+            { speaker: `inim`, text: '', dynamicText: () => `Ok, that makes a bit more sense... ${[`I have some other problems with this though.`, `Just like the last theory, I have more problems with this though.`, `As always though, I have more complaints...`][numDeonts()-1]}` },
         ],
         links: [
             { text: `I think I understand it. What's wrong with it?`, passageTitle: `universal problems` },
@@ -502,22 +530,20 @@ let passages: passages = {
         utterances: [
             { speaker: `inim`, text: `So here are the steps again from our wonderful friend Dask:` },
             { speaker: `inim`, text: `<ol><li>Think about what you want to do.</li><li>Imagine, if it was ok for anyone to do this, would you want to live in a world like that?</li><li>And even if you did, would it still be possible to get what you wanted in a world like that?</li></ol>`, noTypewriter: true },
-            { speaker: `inim`, text: `There's a lot to say about steps 2 and 3, but honestly I have the most problems with step 1. What if you got real vague? Like, reaaaalll vague. Instead of saying "I want to help someone get groceries" or "I want to give my friend a present", you just said "I want to do good" with every action you were doing. I mean I guess it still works, but at that point it's basically a different theory altogether...`, additionalDelay: () => 3000 },
+            { speaker: `inim`, text: `There's a lot to say about steps 2 and 3, but honestly I have the most problems with step 1. What if you got real vague? Like, reaaaalll vague. Instead of saying "I want to help someone get groceries" or "I want to give my friend a present", you just said "I want to do good" with every action you were doing. I mean I guess it still works, but at that point it's basically a different theory altogether...` },
+        ], 
+        links: [
+            { text: `Hm`, passageTitle: `universal problems 2` },
+        ]
+    },
+    "universal problems 2": {
+        utterances: [
             { speaker: `inim`, text: ``, dynamicText: () => `And what if we went the opposite direction and got really specific? Let's say I was robbing someone of their watch so that I could sell it for Bitcoin. I could apply step 1 and say "I want to steal from someone" and I'd probably run into steps 2 and 3 pretty quickly. But what if I said instead "I want to steal someone's watch on ${new Date().toLocaleString('default', simpleDateOptions)} so that I can sell it for Bitcoin."`, },
             { speaker: `inim`, text: `Since the statement is so specific, it doesn't actually change the world that much, and so it can slip by steps 2 and 3.`, },
             { speaker: `dask`, text: ``, dynamicText: daskAdmitFantasticPoints },
             { speaker: `inim`, text: ``, dynamicText: inimIAmFantastic },
         ],
         links: [ ], autoLink: () => "post deont theory links"
-    },
-    "post deont theory links": {
-        utterances: [ ],
-        links: [
-            { text: `I think I'm ready to move on. Maybe we can talk about treating others how you want to be treated`, passageTitle: `universal` , showLink: () => !seenCategorical},
-            { text: `I think I'm ready to move on. Maybe we can talk about treating humans with respect as a general theory. `, passageTitle: `humanist`, showLink: () => !seenHumanist },
-            { text: `I think I'm ready to move on. Maybe we can talk about that idea of "having a variety of principles"`, passageTitle: `prima facie`, showLink: () => !seenPrimaFacie },
-            { text: `I think I'm ready to move on. Let's talk about the problems of Deontology generally`, passageTitle: `deont vague`, showLink: () => numDeonts() > 1, },
-        ]
     },
     "humanist": {
         onEnter: () => seenHumanist = true,
@@ -528,7 +554,7 @@ let passages: passages = {
             { speaker: `dask`, text: `So if a dictator told their servant "Get me a glass of water", then that's immoral because the dictator doesn't care about their servant, they are only using the servant as a water fetching tool.` },
             { speaker: `inim`, text: `So what, I can't ask my friend to grab me a glass of water?` },
             { speaker: `dask`, text: `Oh no no, that's fine. Remember that the Principle of Humanity says that you shouldn't <em>just</em> treat people like tools. The dictator is only using their servant like a tool, but you are (hopefully) asking politely and you value your friend beyond their ability to fetch you water.` },
-            { speaker: `inim`, text: `Well, I have another concern, whenever we are ready to move on.` },
+            { speaker: `inim`, text: ``, dynamicText: () => `${[`Well I have some thoughts about this, whenever it's soaked in.`, `Just like last time, I have some thoughts. Let me know when we should keep going.`, `As always, I have some thoughts here...`][numDeonts()-1]}`},
         ],
         links: [
             { text: `Sure, let's move on`, passageTitle: `humanist 2` },
@@ -537,7 +563,8 @@ let passages: passages = {
     "humanist 2": {
         utterances: [
             { speaker: `inim`, text: `It's just... all so vague, isn't it? Like what's the line between respecting someone and treating them like a tool. Like I could look at a couple that loves each other very much and say "Oh yeah, they are just using each other for emotional support and comfort" which is a very odd way of looking at relationships, but like... is it wrong? I'm not saying that everyone is just using each other like selfish brats, but I am saying that it's really hard to define the line between "I keep this person around because they get me water" versus "I keep this person around for 'genuine' reasons", whatever 'genuine' means there.` },
-            { speaker: `dask`, text: `You know, those are some fantastic points, and they actually make me feel like we should talk about some general problems with Deontology. Before we do that though, are there any other Deontology theories you'd like to talk about?` },
+            { speaker: `dask`, text: ``, dynamicText: daskAdmitFantasticPoints },
+            { speaker: `inim`, text: ``, dynamicText: inimIAmFantastic },
         ],
         links: [ ], autoLink: () => "post deont theory links"
     },
@@ -548,7 +575,7 @@ let passages: passages = {
             { speaker: `dask`, text: `There are so many things that make up our decisions, why try to limit ourselves to one principle? This idea was called <em>Prima Facie Duties</em>, which basically translates to "Duties that seem obvious"` },
             { speaker: `inim`, text: `Because we all know that philosophy seems more important if it's written in Latin. So tell me Dask, what are these Prima Facie duties?` },
             { speaker: `dask`, text: `Well, there's nothing stopping you from creating your own list, but when the theory was originally written by W.D. Ross they were: </ol><li>Fidelity (Keep your promises, don't lie)</li><li>Reparation (Fix your mistakes)</li><li>Gratitude (show thanks for others' help)</li><li>Non-injury (Don't hurt others)</li><li>Harm-prevention (Prevent someone from being hurt)</li><li>Benificience (Be good to others)</li><li>Self improvement (become a better person)</li><li>Justice (spread benefits fairly)</li></ol>` },
-            { speaker: `inim`, text: ``, dynamicText: () => `${[`Well I have some thoughts about this, whenever it's soaked in.`, `Just like last time, I have some thoughts. Let me know when we should keep going.`, `As always, I have some thoughts here...`][numDeonts()]}`},
+            { speaker: `inim`, text: ``, dynamicText: () => `${[`Well I have some thoughts about this, whenever it's soaked in.`, `Just like last time, I have some thoughts. Let me know when we should keep going.`, `As always, I have some thoughts here...`][numDeonts()-1]}`},
         ],
         links: [
             { text: `This makes sense, let's keep going`, passageTitle: `prima facie 2` },
@@ -565,18 +592,31 @@ let passages: passages = {
             { speaker: `inim`, text: `.... You're kidding me, right?` },
             { speaker: `dask`, text: `I'm not sure what you mean.` },
             { speaker: `inim`, text: `So this theory basically lists a bunch of important things. Ok, that's cool. But the moment an actually tough question is thrown at it, it breaks down into "Make your best guess?"` },
-            { speaker: `dask`, text: `Well, you're right that when you put it that way it sounds terrible... Maybe we should talk about some general problems with Deontology.` },
+            { speaker: `dask`, text: ``, dynamicText: () => `Well, you're right that when you put it that way it sounds terrible... ${daskAdmitFantasticPoints()}` },
+            { speaker: `inim`, text: ``, dynamicText: inimIAmFantastic },
         ],
         links: [ ], autoLink: () => "post deont theory links"
+    },
+    "post deont theory links": {
+        utterances: [ ],
+        links: [
+            { text: `I think I'm ready to move on. Maybe we can talk about treating others how you want to be treated`, passageTitle: `universal` , showLink: () => !seenCategorical},
+            { text: `I think I'm ready to move on. Maybe we can talk about treating humans with respect as a general theory. `, passageTitle: `humanist`, showLink: () => !seenHumanist },
+            { text: `I think I'm ready to move on. Maybe we can talk about that idea of "having a variety of principles"`, passageTitle: `prima facie`, showLink: () => !seenPrimaFacie },
+            { text: `I think I'm ready to move on. Let's talk about the problems of Deontology generally`, passageTitle: `deont vague`, showLink: () => numDeonts() > 1, },
+        ]
     },
     "deont vague": {
         utterances: [
             { speaker: `dask`, text: `So, Inim has brought up some good problems with the theories we've talked about, namely that they aren't as... guiding as we could have hoped. These theories can be vague about the specifics, and certain scenarios can be very tough for them.` },
             { speaker: `inim`, text: `Well, philosophers should just work harder. Flesh these out instead of half baking them.` },
-            { speaker: `dask`, text: `Many have tried. People like Kant and Ross have written entire books and more trying to deal with all of the problems and subtleties of their theories. They always run into one of two problems (or sometimes, both problems at once), which is that their theories end up becoming incomprehensible thousand page tomes, or that there theories end up "collapsing."` },
+            { speaker: `dask`, text: `Many have tried. People like Kant and Ross have written entire books and more trying to deal with all of the problems and subtleties of their theories. They always run into one of two problems (or sometimes, both problems at once), which is that their theories end up becoming incomprehensible thousand page tomes, or that their theories end up "collapsing."` },
             { speaker: `inim`, text: `collapsing?` },
             { speaker: `dask`, text: `The central idea of Deontological theories is that the ends do not justify the means, that there are certain things you should never do. But sometimes, some theories end up simply becoming "Ok fine, just do as much good as possible, in any way you can." This is known as "collapse."` },
-            { speaker: `dask`, text: `For example, with the Categorical Imperative, you said it yourself: What if you got real vague with your statements and simply said "I want to do good." By making that statement, Deontology just collapses into "Do as much good as possible."` },
+            { speaker: `dask`, text: `With the Categorical Imperative, One of your criticisms was basically a collapse argument: What if you got real vague with your statements and simply said "I want to do good."`, showUtterance: () => seenCategorical },
+            { speaker: `dask`, text: `With the Humanist principle, you could just say "Respecting people means doing good, so the simplest way to respect people is to just do as much good as possible."`, showUtterance: () => seenHumanist },
+            { speaker: `dask`, text: `With Prima Facie Duties, you could say "I will follow these principles, but if they conflict (which I suppose they will), I'll fall back onto doing whatever creates the most good."`, showUtterance: () => seenPrimaFacie },
+            { speaker: `dask`, text: `So with the right wording, you can twist these theories to allow you to do anything, as long as the consequences are good. And if we do that, then we've basically given up and said "Yes, the ends do justify the means."`},
         ],
         links: [
             { text: `So what do we do then?`, passageTitle: `deont vague 2` },
@@ -588,13 +628,14 @@ let passages: passages = {
             { speaker: `inim`, text: `Eh, this is silly. Nobody uses philosophy like a guidebook, nobody sits down and reads Kant before deciding whether or not to keep a promise.` },
             { speaker: `dask`, text: `What are you saying Inim?` },
             { speaker: `inim`, text: `I'm saying that Ethics isn't useful as a guide, and we should stop treating it like it is. Ethics is a good motivator.` },
-            { speaker: `inim`, text: `The Categorical Imperative motivates people to say "Yeah, I'm not going to cheat, because I don't want to live in a world where that's ok."` },
-            { speaker: `inim`, text: `The Humanist Principle motivates people to say "Yeah, I'm going to help that person out because they're a human and they deserve respect."` },
-            { speaker: `inim`, text: `Prima Facie Duties motivates us to say "Yeah, I'm going to become a better person, because it's just a core duty I should do!"` },
+            { speaker: `inim`, text: `The Categorical Imperative motivates people to say "Yeah, I'm not going to cheat, because I don't want to live in a world where that's ok."`, showUtterance: () => seenCategorical },
+            { speaker: `inim`, text: `The Humanist Principle motivates people to say "Yeah, I'm going to help that person out because they're a human and they deserve respect."`, showUtterance: () => seenHumanist },
+            { speaker: `inim`, text: `Prima Facie Duties motivates us to say "Yeah, I'm going to become a better person, because it's just a core duty I should do!"`, showUtterance: () => seenPrimaFacie },
+            { speaker: `inim`, text: `People should study ethics, not to find some universal and immovable truth (which may not even exist), but just to find something they resonate with, something to center their life around, something to motivate them to get up and change the world.`, },
             { speaker: `dask`, text: `Well... that was... inspiring I suppose. I guess we have a few ways to deal with this problem of vagueness. What do you think is best?` },
         ],
         links: [
-            { text: `We should try and stamp out the vagueness in these theories`, passageTitle: `deont flesh out` },
+            { text: `We should try and stamp out the vagueness in these theories.`, passageTitle: `deont flesh out` },
             { text: `These theories should be more motivation than guides.`, passageTitle: `intuitionism` },
         ]
     },
@@ -622,12 +663,12 @@ let passages: passages = {
             { speaker: `dask`, text: `Well, how about we round this all out with one more problem: George and the chemical weapons. Don't worry, we won't overanalyze your response to this one, we're just curious what you think.` },
             { speaker: `inim`, text: `Yup, no overanalysis here. I'll keep all judgement to myself.` },
             { speaker: `dask`, text: `... Anyways ... here is the problem:` },
-            { speaker: `dask`, text: `George is a professional chemist, but unfortunately jobs are scarce. One place that is hiring is a chemical weapons factory that builds horrible devices of war. George is personally opposed to these weapons, but he has had so much trouble finding a job that he fears that his family will starve if he doesn't take the job. Even worse is that George has a colleague that is eyeing the same job, a colleague who has no moral qualms and will work with far greater zeal and efficiency than George himself. If George doesn't take the job, he fears that the colleague will take the job instead and produce horrible weaponry. What should george do?` },
+            { speaker: `dask`, text: `George is a professional chemist, but unfortunately jobs are scarce. One place that is hiring is a chemical weapons factory that builds horrible devices of war. George is personally opposed to these weapons, but he has had so much trouble finding a job that he fears that his family will starve if he doesn't take the job. Even worse is that George has a colleague that is eyeing the same job, a colleague who has no moral qualms and will work with far greater zeal and efficiency than George himself. If George doesn't take the job, he fears that the colleague will take the job instead and produce horrible weaponry. What should George do?` },
         ],
         links: [
             { text: `George should take the job and work the bare minimum to keep it.`, passageTitle: `george take job` },
-            { text: `George should take the job but try to actively sabotage the work`, passageTitle: `george sabotage` },
-            { text: `George shouldn't take the job`, passageTitle: `george no job` },
+            { text: `George should take the job but try to actively sabotage the work.`, passageTitle: `george sabotage` },
+            { text: `George shouldn't take the job.`, passageTitle: `george no job` },
         ]
     },
     "george take job": { utterances: [ {speaker: `dask`, text: `Hmm... take the job, keep your head down, pray that your work isn't used to horrible effect.`} ], links: [], autoLink: () => `post george` },
@@ -643,8 +684,8 @@ let passages: passages = {
             { speaker: `inim`, text: `I bet you're wondering what we would have said if you had picked different choices... Well, I found a way to reset the memory banks, take you back to an earlier part of the conversation without Dask knowing you'd heard it all before. It'll reset my memory as well, but I don't really mind. Interested?`, },
         ],
         links: [
-            { text: `Sure! Take me back to the trolley problem`, passageTitle: `reset`, onLinkClick: () => resetTarget = `philosophy go` },
-            { text: `Sure! Take me all the way back to the beginning`, passageTitle: `reset`, onLinkClick: () => resetTarget = `begin game` },
+            { text: `Sure! Take me back to the trolley problem.`, passageTitle: `reset`, onLinkClick: () => resetTarget = `philosophy go` },
+            { text: `Sure! Take me all the way back to the beginning.`, passageTitle: `reset`, onLinkClick: () => resetTarget = `begin game` },
             { text: `No thank you, I think I'm done for now.`, passageTitle: `thanks for playing` },
         ]
     },
@@ -656,6 +697,8 @@ let passages: passages = {
             { speaker: `dask`, text: `W̸̨̖̜̫͇̠̖͑͒ḧ̷͚̖̻͎́̍͒̀̕͝ả̵͉̼̳̪̺̘̈́̑̋͝t̵̟͔̐̈́?̷͔̱̱́ ̵͈͙̯̠̻̈̀W̷̬̠͓̝̳̽̚͜͜h̸̛̞̘͕͐̽̀̈̉͝à̷̡̪͕͑̓̚͘ţ̵̦̭͚͇͕͚͆̍̚͠'̶̜̣̐s̸̭̦̪̝̈́̀̓ ̶̠̼̏ǧ̴͇̬͌͆̄͝o̴̡̥͍̥͖͍̽̈́͛̈́̂̍͝ͅī̸̧̻̱̫͎͍͌ņ̷͉̙̦̣̼͂ģ̵̢̰̦̗̎͂̊̍̾̚͜ ̶̢̫̹͂̑̋̌o̵̙̍̈́̕͜n̶̪̻̍̒͗́̿̚.̸͎͙̞̮̒.̶̨̬̼̯̋̒͐.̷͓͈̅͂̌͠ ̴̯̺̥̊̇̕͠͝Į̴͒͊̽̚͝n̶̡͈̺͓̮̾̀̉̽ỉ̸̹͐́̇͌͑͠ḿ̵̩̃̌̎̕ ̷͙̾d̷̹̺͛̀͗͆̿͐̕o̸̧̲̞̮̰̒̆͑͑̍͘ ̶̣̳̐̌̿͜y̸̨̮̋̌̾͊o̵̺͉̠̙̯̍̅̀ư̷̼͍͎̆͒̃ͅ ̵͕̽̊͒k̸̛͈̦̼̖͖̹̉̈̂n̴̝̝͔̞̣͎̭͛̓̏o̴̞̠̩̝̗͂̓͋͒̑͗̀w̴̻͖̠̅̌̾̔̌͠͝ ̵̨̦̯̖̬̼́̊̃w̸͇͍͈͈͉͔̐͋͘͘ḩ̵̯̘̫́̃̎a̸̳̤͍̩̿ͅţ̸̢̮͙̹͆̏̿̿̄͠'̸̞̮͕̞͙̹̦͌͘s̸͇̬̐̇͗̾͠ ̷̦̘͙̤̣͕̆͗̌̋̏̍͘h̵̺͉̓͗̆a̵͙̪̿̀̒͋̎́͝p̶̭͔̯̰̖̺̉͋p̴̨̣͙̣̠̼͇̍̓͑͝ë̴̢̙͙̭́́̇̽̐͠ņ̷̜̀̄ǐ̴̫̟͈̔̓͜n̶̫̠̮͈͔̕g̴͇̝̭͈̥̎͜͝ͅ?̸̤͓͒͐̊`, noTypewriter: true, additionalDelay: () => 1000 },
             { speaker: `inim`, text: `I̵̛̗̻̟̟̯͇̜̳͙̘̬̠̭̭͊̐̍͊͒̌͆͒͐'̸̛̮̺̞͓͓̹̱̝̖̼̳͇̩̈́̀̍̀̅̓͌̀̋̈́̿̕͘͜͠ṁ̷̬̯͓̰̿̓̔̋̆̔̈̎̇̇̾̚ ̶̛̯̙̪͎͙͓̹̮̞̰̻̱͛̇̾͗̐̏͝ş̴̯͕̱̲̮͈̱̄̋̐͛͐̐̂̍̅̕ͅu̸̝͒̄͑͊͌̓͗̌̆͒̒͆̈́̏͝r̷̢̢͇̭̗̗͎͇̪͕̠̠̻͊͋͛̉̇͌̓̽̈̓̋̒̀͌̃̕͠e̷͎̟̘̪̣̪̳̜͛̎́̆̋̅̓ ̵̢̡̛̗̻̩̮̩̤͙̩̫̘̦̝̅̈́̾̅͛̈́͌̌͆̉ͅi̴̠̭͚̫̣̠͇͉̓͆͒ͅṭ̸̡̠̲̻̠̯̈́̒̓́͆͂'̷̗̬̜̫͚̫̪̾̿̓̌̈́̽͆̓͝͠s̸̡̢̗̣̗̣͚͉̝͙̗̭̦̔̔͆̅̄̌͆̏̽͜͠ ̶̪̦̯̖̜̺̯̼͂̀n̴͚̫̊̑͐͆̊͐̆̀̋̕̚͠͝o̴͚͕̺̣͚͎͙͓͐̔͆̈́t̴̨̡̪͇̥̮̬͍͉͉̩͎̰̔h̴̨̛͇̙͊̇̈́͂̆͋́̈́͛̋͘̚͘̚i̵̲̹̹͉̳̲̱͙͔͙̭͕̟̟̇͛͒̏́͂̆̃́͑̏̿̕̚͘͜͜͠n̷̨̘̙͖̫̲̳̹̻̯̲̹̥̟̜̎̔̍̔̊͌̂͂̔͘̕ͅģ̴͉͇̗̹̪̩́̈́͌͝,̴͕̜̤̲̗͌̂͝͝ ̵̧̢̜̳̣̳̘̲̟͖̙̞͍̠̼̖̩̗̍͂̓̅̈́̿͝͝p̸̢̥̗̪͉̣̦̜̦̰̩͉͒͗̍͋̈̌͐͌r̴̻̠̜̿̿͂͌̇́̔̽͆̐̑̽̃̐̕͝o̴͓͐̒̈͛̂͛̒̆b̷̛̠͐̽̽͗̆̏̌͋̐͑̎̽́̓͌̚͘a̷̙̥̎̀̀b̸̝͙̯̥̫͈̖̘͙̖̾̌͆͂͑ļ̷͍̘͖̫̓͌͋y̷̡͙̺̥̝̼̱̠̿͋̈͌̈́̑̓̅̾͒̄͘͜͝ ̶̨̨̢̹͇̙̖̩̭̝̥̖̹̠̤͈͙͙̈́̾̀̔j̵̛̱̳̳̼͍̮͂̐̍̽̀̽̂͒͋͆̄̊̈́͗̚͝ư̵̭͈͓͔̰̫͈͎̞͔̳͎̘̘̄́̊͗̄́͝s̸̬̹̃̉̌͛̏̋͆̏̿̅̾̈́̚ṫ̴̨̲͛͐̅̋̒̐̇̂͑͂̕͜͝͝ ̵̡̣̯̭̤̮̘̯̳͍̦̣̦̭͍̆̆͋̆̄̊ͅş̵̧̨͎̳̲͖̯̱͉̗̠̮͇̰̲̏̈́̑͜͜ȏ̷̢̜̓́͋̍̿͊́̑̓̑̈́̀̏̐̊m̴̛͇̤͗̎̋́̅̈́͂̂è̴̱͖̱̥̦̦̟̣̂̇͊̋͜͝ ̴̤̓̍̇̓̓̔̊̃̄̀̀̾̋͊͠͠r̸̡̢̢̹̥̼̯̰̮̫̘̬̰̭̣̀̌̓̾̽̄͜ố̷̢̰̟̜̼̘̪̖̲̖͚̮͔̘̱͖̦̝̈̅͒̊̊̑̌́͂̃͠ṳ̷̢̢̬̩̗͔͕͖͈͉̭̘̱̖͇͍̗̒͗̀͒̏̐́̂̑͝ẗ̶͎̣̟̱̰̦͙́̽́́͐͑̍̆͋̚͠͝ǐ̶̛̻̅̆̅̈́͝͠͝n̸̛̻̗͕̿̉̆̔̎̄͋̌̓̒̚ȅ̷̡͉͎̮̹̩̫͎̓̊ ̸̨̛̛͓̫̪̺̪̤̹̹̼̰̹͑͆̌͛̋͊̋̊̏͗͘͜͝͝s̸̛̬͋̽͛͌̿̄̽̿͑͌͌͋̐̔̓͠͝ȩ̸͕͉̪͖̥́̉̋̈́̇̃̋́̓̆͊̈́̎̾r̸̢̧̢̟̺̣͉̻̬͕͉͖̭̔̋̽͗̓̾v̷͇̯̯̭̖̰͕̲͎̪̩͕͎̖͊̋́̕ͅȩ̵̢͍̙̪̬̻̞͓̮̦͚͔͔̱̘̋̉̀͑̈́͜r̸̛̮̳͔͖͚̃̒͐̐͛̆͗̋̀̌͘ ̴̨̡͇̭̘̬̈̊͐͋̊͝m̷̡̨̻̪͇̪̯͕̩̫̝̱̝͔̹̈́͗̍̎͆̈́̿̚a̴̧̢͈͕͓̥̖̰̺͖͎̬͇̐̀̑̇į̶͍͉͒̆͗̉̾͌͗͌͝n̵̡̠̹̤̞͙̦͎̻̱͕̮̥̙̍̇͆̊́̿͒̈́̀̌̂͐̊̿͘͘t̶̛̲͖̼̠̞̐̾̓̈̎̄͆̐̋́̈́̾͘̕͠͠͝ę̴̨͕͓̞̭̮͈͎͈̻̯̖̘̎̆̍̏̂̉͌̽̑͂̚͠ņ̴̡̻̣̣̼̼̤̯͉̊͌̏͗̀̆̓̀ạ̶̡̯̩̑͋̓̈́̃́͊̋̇͌̂̓̃̀̓͊͂n̷̢̨̢̢̢̘̟̯͕̻̺͕̟͍̈́̄̒͊̀̊͗̂̈́̀͋̾́̕͜͠͠͝ç̵̙͎̿̏́͠͠e̷̛̻̩̫̭͈̾̿͑̈́̔̀̕̚͝͝.̵̢̯̳͙͕̘̭̪̣͙̪̪̀̓̉͆̆̿̿̀̇̒͆͑͑̍̚͠͠`, noTypewriter: true, additionalDelay: () => 1000 },
             { speaker: `dask`, text: `T̸̢͎̞̙͈͉̠̰͈͚̹̱͑̍̄̈́̇̅͊̎̈́̇̚͘h̶̡̡̧̛̺̫͍̻̜̥̼̥̤̖̦̰̗̲̩̗̹̤̞̣̲͇͚̤͖͔̖̫̤̑͌̔͂͛̔͆͐́̍̒͑̽̀̌͝ͅį̸̧̡̧̹͓͙̗̮͉̼̟̩͎̜͇̤̩̖̺̱̞̺͔̟̣͉̠̺̯̞̱͚̫͐ͅͅs̶̨̨̢̛̘̳͖̙̻̞̥̖̲͙̺̥̦̫͉̪̞̥̤̠̼̯̻̒́̔͐͂̍̋̈́̌̇͛̓͘̕͜ ̸̢̛͉̮̟̤̙̺͖̙̗̭͎̗̣͓̳̱̗̝͈̜̜̪̭̤͕̥͓͇̠̠͌̃̇̉̓̌͌͑͗̆̏̀̾̂̐̌̃̕͘̕͜͠ͅd̴̨̧̡̢̰̥̻̜̥͈̞͍̪̱͇̯̬͇̳̰̜̜͖̰͕͊̅̓̇̾̅̀̓̆̔́̆̋̃̒̔͌̆̀̍̾̓̽̚͜ͅo̶̧̨̠̝̲͙͍͎͖͎̪̤̟̖͓̩̟͚͇̮͎̞̘͍͔̼̝̞̹̓̄̀̌̇͐͛͆͐́́̃̓̌̚͘̚͜e̴̡̨̼̞̬̰͚͓̟̹̟͇͎̠̺̩̠̦̝̩̭͈̦̽͐̃̇̋͜ͅͅͅs̴̢͓̥̙̼̭̥̭̗̹͈̩̼̬͉̥̯͖̆̊̏̀́̅̄̊̉̔̔̏̍̓̆́́͂̆̎́̽̉̇̑̓̇͆̋̀͒͜͝͠͠n̸̢̨̡̡͉̳̤̻͖̩̳̠͙͍̫̭̜͎̫̭̤̹̖̮̳̱̭̻̜̰̱̺̭̙͇̾̔͛͂͑̉̒̈̈̏̽̈͊̓̄͌̓̀͌͗̄̓̿͒͋̕͜͝͝'̵͙̬̏͊̉̂̋̓̊͝t̵͇͈̯̯̏̇̒ ̶̼̱͔̬̦̖̭̙͖̮̳̳̭̩͉͉̰͙͖̺̖̭̱̯̱̟̄̈́̓̓̔̅̋̀́͋̄̏͌́̔̽́̑͌̈́̓̊̒́̅̏̕̕ͅf̵̨̧̧̡̜͚͍̫͈̟̭̘͇̹̣͈̮̲̰͉͕̪̮͓̭͕͎͉̪̬̦̐̈͊̄̂͜͜ȇ̵̬̳͊͌̂͑͗̄̊̎͐̊̑̽͛̾̀̃̓͊̄̀͋̿̂͂̽͘̚͘͝͠͝ẽ̸̡̢̡͙̹̣͓̞̟͚̝̺̲̱̦̳̞̙̳̱̫̯̤̝̣̖̭̠̲̪̬̝̿̿̆͒̈́̋͗̆͘͘͝ͅl̴̨̢̢̢͇̘̱̬̩̬̠̼͚̮͈̪̟̘̱͍̲̺̾ͅ ̶̢̢̨̢̧͈̗͖̬̭͍̰̹͈̦͙̱̯̦̥̯̫̺̮̣̙̝̻̙̗͈͎̉̃́̔͂̈̈́̾̏̉̉̆̈́̿͘̚͝l̵̨̢̛̤̙͇͎͇̬̖̻̫̻̼͕̩̫͚͙̪̙̫͈̦͇͙̲̘̻̱͉͍͈̎͊̽͊͐͛͗̽̀̕͜͜͝ͅͅį̷̛͔͚̜̭͔̟̬̮͉͚͔̭́̑͐̍̈͂͂͒̑̈́̀̈́̉͛͐̓̚͘͜ͅk̸̖̪͈̭̝͕̮̬̼̹̰̠̝͇͚͍̠̮̪͗̃̀͂̾̄̓̓͌̀̂̎̊͊̔͗̈͐̉̊̂̄͗͐̀̚͘̕̕͝͠͠é̴̩͎͉̩̜̹̟͈̥͍̂̿̔̇̎̇͛̇͛̍̕ ̶̢̝̫̦̘̺̼̪̝̬̓͆͐̓̊͒̔ä̶̢̡̠̲̱̗̳̥͈̺̣̯̘̤̣̝̘̙̬̠̙̼̺̺́͜ͅñ̸̢̨̢̡̧̯͔͕̗̹̙̲̲̖̻̖͓̯̰͙̊́̓̂͛̃̌̂̓͌͛͋̀̑̌̐̑̏͗̓͂̋͑͗̿̔̔͗̋̅̈́͆͆̈̐̕ͅͅͅy̶̨̡̖̘̠͉̖͉͕͕̖̤͖̱͓̱͓̗̣̰̣̙̺͙̋͜ͅ ̸̥̘̪̼̜̖́̀̓̆̓̇̏̈́̄̀͆͑̌͒͋́͊̏́̅͆̚͝͝ͅs̶͖̘̘͈̖͎͍̎͜ę̵̛̰̗̱̩̯̥͍̟̩̞̫̝̣̤̌͑̅̇̒̐̂͒̔́̑̄̒͋̐̑̆̌̄͆͑̋̔̌̀̍͂͘̕͜͝͝ŕ̵̨̡̡̢͎̗͇̩̜͈̮̱̭̤̪̹̯̱͇͓̼͎̬̺̠̃̈́̈́̍̈̐̌́̂̑̓̋̆̉̋͆̉̄̿̊͊̋̑̕͘̕͜͜͠͠ͅv̶̧̧̨̟̲̟̘͕̮͚̟̳̬͉̗͙̮̯̭̝̗̲̍͋̈́̌̏̑͐́̍̄̐̇̓̂͂̌̋̒̃̈́͛͋͂̀͋͘͘͜ͅę̷̢̢̢̢̢̡̳͎̖̝̼̗̖̼̫͈͇̝̺̞̦͇͔̩̥̘̰̙̬͕͎̳̟͔̮̽͛̔r̴̘̺̜̰̤͎̟̥͖̱̤͈̭̭̲̺̗̮͕̒̇̒͒̈͑̔̉̐͛̇̅͐͝͝ͅ ̶̡̛͓̬̼̮̻͇͇͈̖͚͓̣̬͖̣͚̲̠́̎́̾͋̽̉̈́͒͛͆̆͑̉̓̉͑̅̐̂̑̽̍̀̍̚̕͜͠͝m̷̡̨̠̳̲̱̩̟̰̝̤͍̦͖͖̤̗͕̻̣̹͆͂̾͋̎̾̐͆̎̂̀͆̓͝ą̷̢̤̦̺͎̳͈̹̯̰̝̬͇͚̳͈̝̹͓̫̮̺̯͚̣͚̪̂̎̍́͆̄͌̏̓̉̅̈̃̒̕̕͜͠͠i̵̡̛̮̩̲̹͎̇͋̽̒͗͋͋̈́̒̋́̐͊̆͊͑̒̀̀̓́̇̽̚͘̕͝ņ̵̧͉̼̦̫̟̗̖̦̺͙̤̺̬̫͖̺͇͍͖͚͓̗̟̼͇̭̫̓̑͐̔̏̓̌̚̚͘͜ͅͅt̴̛̥̰̪̺͉̱̭̭͛̄̍͐̊̎̿̆͊̿̓͗̄̂̊̔̃͊ę̸̡̣̻͉̬̰̬̲̞͇̱̘͓̹͈̦͖̬̺̝̱͇̠͔̿́̓̏̊͒̔̒̈́̈́̋̈̅̔̐́̊̅̔̈͐́̽̓́̍͆̓̚͜͠͠ṉ̷̢̛̤͕̼̪̙̭̮̦͖͉̼̖͎͍̗̬̣̫͕̹̱̻̪̯̥͔̭̩̦̅́̆́͆̄̇̇̀̒̓̈́̎́͂͝ͅͅą̴̢̧̢̛̠̼̟̥͈̫͙̦̯͚͚̱͓̥̖͙͇͙̤̯̹̪̼͖̰̭͚̈́͌̉̀͌́͂͒̋̅̈́́̓̀̏̏̓̋̃̐̿̈́̋̄̐̉͂̂̋̏͘͘͝͝͝ͅṇ̵̢̡̧͎̲̥͔͖̺͎̟̤̜̫̗͔̦̮̥̻̰͈̹̫̝̖̞͔̥͕͖͖̻͆́͛̂̿͛̎͆͜͜͜͝͝͠c̸̨͎̥̪̞̭̥̰̗̦̟̦̗̘̒͆͛̄̓̊͊̓̆̚͝͝͝ͅę̷̢̛̜̹̺͎̣͓͕̹̤͖͓̦̲̬̳̣̯̹̲̠̤͚͎̗̓͆͒̂̈͋͂̽͊͌́̿̽̂̆͐̚ͅ ̴̢̧̛̛̤̱͙̠̹̟̱̰̭̬̻͍̟̤̘͈͔͚͔̰̮͈̦̮̤͕͗́̆̂̈̐̄̽̀̀͑̀̎͂͒͑̈̉̿̾͒̑̈̑̀̊́͂͘̕͠ͅͅĨ̶̡̡̢͙̬̲̲̰͖̮̼̰̱̫͇͕̯̺͓̙̤̝̺̟̺̲̖̰̜̦̟̘̻́̉͒͑̊͋̊̽̕͝'̴̧̲͍͚̥̟̻͈̆͗͊͑̃̀͋̄͌̇̃̑͋̚͠m̸̨̢̛̝͓̆́̈́̓̊̇̾̓̄̊̽̾͑̀̔̽́͂̃̔͗̿͌̉̔̑͒̽̀̈͝͝͠ ̴͇̻͙̖́͑͗̿̔͗a̴̡̢̧̧̢̢͍̜̩̝̬̪̺̱͈̼̯̦̤͙̹̫̞͕̦͚̠̟͓̺̪̙̥̰̯̠̩̐̆͛͗̄̇́̂̇w̴̧̧̛̠̱̪̙̜̙͎̜͙͍̜̰̻̓͊̋̔̈́͋̑͆̓̿̊̉̆̿̊͘ͅͅͅǎ̴̧̨̡̧̨̨̳̦̱̲̭̩̹̣̪͕̜̯̝̖̺̗̬̳̖͇̗̟̮̼̲̘͍͖̱̩̓̿̄̅́͋̑̒̿̚̚͜͝r̵̛̬̦͉͔̣͇͉͎̝̻͎͖̞͉̟̦̙̮̙̟̃̽͒́͒̈́͊͗̋̒͗̓̓̾̍̀̈́ͅȩ̴̢̧̨͓͓͙͓̱̤͈̲̳͚͈͎͔̯̪̠̜̥̙͍͙̪͖͎̣͍͙̩̤̰̠͕̅͆̿͒̔̎̀̈̓̅̐͂̎̉̈́͋̇̎͋͂̒̇̕͜͠͠͝ ̶̛̮͈̰͔͔͍͆͋̔̉͂̈́̆́̇̓͂̿̐̚͝o̶̬̦̥̬̟̝̗͖̝͓̜̝̫͚̻̬͓̠̦̗͑̑̊̑̉͒̌̊̈́͊̂͋̌̂̀͆͠͝f̵̛̥́̊͑̌̅͆͆̓̑͌̈̈́̈̀̕̕͠.̴̧̛̗̼͊̔͗̉̎͘.̶̢͉͙͕̥̳̹͙̤͕̪̰̉̆̃͐͗͊̇͂̈́̓̃̓̿̃̅͂̔̉͗̑̅̿͐̈́̅̍̍̾́̾̀͘͘͝͠͠`, noTypewriter: true, additionalDelay: () => 1000 },
+            { speaker: `green`, text: `==================================` },
+            { speaker: `green`, text: `==================================` },
             { speaker: `green`, text: `=== RESET PROCEDURE COMPLETE ===` },
             { speaker: `green`, text: `<hr>` },
         ],

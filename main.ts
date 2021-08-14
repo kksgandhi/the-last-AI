@@ -11,7 +11,7 @@ type link = {
     readonly text:              string,
     readonly passageTitle:      string
     readonly showLink?:         () => boolean,
-    readonly dynamicText?:      () => boolean,
+    readonly dynamicText?:      () => string,
     readonly onLinkClick?:      () => void,
     readonly dynamicReference?: () => string,
     readonly ignoreDebug?:      boolean,
@@ -64,7 +64,7 @@ let renderLinksGeneric = (main: Element, passage: passage) => {
             // render the link only if the link has no "showLink" hook or if the showLink hook passes
             if (!('showLink' in link) || link.showLink!()) {
                 let linkElem = document.createElement("a");
-                linkElem.innerHTML = link.text;
+                linkElem.innerHTML = link.dynamicText?.() || link.text;
                 // Set the onclick property to render the next passage
                 linkElem.onclick = () => {
                     // don't do anything if the link has been clicked in the past (or if the link was unclicked, but part of a group of links where another one was clicked)
@@ -241,10 +241,14 @@ validatePassages();
 
 let textSpeedSlider = (document.getElementById("textSpeedSlider")! as HTMLInputElement);
 let setDelayToSliderVal = () => {
-    // Make the slider a logistic curve
-    let x = parseInt(textSpeedSlider.value);
-    delay = 2 * baseDelay / (1 + Math.E ** (-0.005 * (500 - x)));
-    console.log(`New text delay ${delay}`);
+    // Rather than a linear speed up or down, it'll feel better if it's a curve
+    // https://www.desmos.com/calculator/ntlhlbmqiz
+    let sliderVal = parseInt(textSpeedSlider.value);
+    let piece1 = (x: number) => ((2 * baseDelay * (x ** 2)) / 250000) - (2 * baseDelay * x / 250) + 3 * baseDelay;
+    let piece2 = (x: number) => ((-1 * baseDelay * (x ** 2)) / 250000) + (baseDelay * x / 250);
+    // the curve is piecewise, and switches at 500 (halfway down the slider)
+    let pieceOfPiecewiseFunctionToUse = sliderVal < 500 ? piece1 : piece2;
+    delay = Math.round(pieceOfPiecewiseFunctionToUse(sliderVal));
 }
 textSpeedSlider.oninput = setDelayToSliderVal;
 
