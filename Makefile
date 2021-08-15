@@ -13,4 +13,5 @@ release:
 	cp *.js *.css *.html release/
 	cp -r imgs/ release/
 	cp -r reviewers/ release/
+	cp -r docs/ release/
 	zip -r release.zip release/
