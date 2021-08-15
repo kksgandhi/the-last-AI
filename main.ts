@@ -158,6 +158,7 @@ let renderPassageTypewriter = async (passage: passage) => {
                     // if the character was other punctuation, wait a bit longer
                     if (".:;!?-".split('').includes(character))
                         await sleep(delayPunctuation * delay);
+                    scrollToBottom();
                     // wait between characters
                     await sleep(delay);
                 }

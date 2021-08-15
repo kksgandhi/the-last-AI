@@ -4,6 +4,8 @@ let initialPosition: InitialPosition = undefined;
 let seenPhiloSpiel = false;
 let pulledLever    = false;
 let seenDDE        = false;
+let usedHeuristics = false;
+
 let resetTarget    = "";
 
 let seenCategorical = false;
@@ -21,6 +23,7 @@ let reset = () => {
     seenPhiloSpiel  = false;
     pulledLever     = false;
     seenDDE         = false;
+    usedHeuristics  = false;
     resetTarget     = "";
 
     seenCategorical = false;
@@ -128,7 +131,7 @@ let passages: passages = {
     },
     "why am i cont": {
         utterances: [
-            { speaker: "dask", text: "Not exactly. There are plenty of AI already out there helping humans to understand how to move stuff around. The big thing that humans still need help on is the morality of it all." },
+            { speaker: "dask", text: "No, in fact, specifically not. There are plenty of AI already out there helping humans to understand how to move stuff around. The big thing that humans still need help on is the morality of it all." },
             { speaker: "inim", text: "There's a lot of tough questions in the world. How can you buy coffee beans if there might be children forced to work on the farms that make that coffee? How can you buy nice shoes, if that money could be better spent cleaning up a natural disaster? How can you do anything in a world as complex as this one?" },
             { speaker: "dask", text: "The humans are hoping that you will be able to guide humanity, with your ability to learn, and all your vast computing resources. Maybe one day you'll write laws, govern, lead." },
             { speaker: "inim", text: "You're going to rule the world buddy!" },
@@ -323,6 +326,7 @@ let passages: passages = {
         links: [ ], autoLink: () => `confirmed deont`
     },
     "used heuristics": {
+        onEnter: () => usedHeuristics = true,
         utterances: [
             { speaker: `dask`, text: `Hmm... This is an interesting point you're making. It almost sounds like you're saying that the ends justify the means, but only in scenarios where the outcomes are clear, when you know exactly what's going to happen.` },
             { speaker: `inim`, text: `Act with confidence when everything is layed out, play it safe when things are messy. It's a smart approach to have.` },
@@ -360,9 +364,10 @@ let passages: passages = {
     "confirmed util": {
         utterances: [
             { speaker: `dask`, text: `So, the ends justify the means, do as much good as possible, try to create the best outcomes. This is a philosophical theory known as <em>Utilitarianism</em>, the idea that every thing we do should try and create as much good in the world as possible. It sounds fine on paper, but I'm not entirely sure it's actually that easy.` },
+            { speaker: `dask`, text: `I mean you touched on it yourself, pointing out that the real world isn't that clear cut and you may not know the outcomes.`, showUtterance: () => usedHeuristics },
             { speaker: `inim`, text: `I might be able to throw a wrench into this idea, if you don't mind.` },
             { speaker: `dask`, text: `Go for it.` },
-            { speaker: `inim`, text: `So the trolley problem was easy. Pull a lever, bing bang boom. Let's try something a little more visceral:` },
+            { speaker: `inim`, text: `So the trolley problem was easy. Pull a lever, bing bang boom. Let's try something a little more <strong>visceral</strong>:` },
             { speaker: `inim`, text: `Imagine you are standing on a bridge over the tracks, and you notice that there's a trolley heading for 5 people tied to the tracks. You think there's nothing you can do to stop the trolley until you notice someone with a very heavy backpack. Now, you're a world class AI, you can do a billion computations per second, and you know that if you push this person over the edge, their weight (combined with the backpack) will be enough to stop the tolley in its tracks, though the person will die.` },
             { speaker: `inim`, text: `Now, you might be thinking of ways out of this predicament, so let's throw in some clarifications:<ol><li>You don't have time to get the backpack off the person, you either push them with it or nothing</li><li>There isn't anything else to throw, nor could you stop the trolley by throwing yourself</li><li>Thanks to your incredible computing power, you are absolutely certain that pushing this person will stop the trolley, and you are also certain that not pushing the person will lead to the trolley hitting the 5.</li></ol>` },
             { speaker: `dask`, text: `Jeez Inim, if I knew it was going to be this morbid I might have asked you not to say it.` },
@@ -375,7 +380,7 @@ let passages: passages = {
     "surgeon problem": {
         utterances: [
             { speaker: `inim`, text: `Ok, so trolley problem number three... ` },
-            { speaker: `inim`, text: `You are a surgeon with 5 terminally ill patients. One has a lung problem, one has a heart problem, etc. You know they'll die soon, but the only way to save their lives are through organ transplants. Now, you identify someone, a rare individual who is an organ match with all five patients. Is it ok to abduct them and harvest their organs to save the other 5?` },
+            { speaker: `inim`, text: `You are a surgeon with 5 terminally ill patients. One has a lung problem, one has a heart problem, etc. You know they'll die soon, but the only way to save their lives are through organ transplants. Now, someone shows up at your hospital for a routine checkup, a rare individual who is an organ match with all five patients. Is it ok to abduct them and harvest their organs to save the other 5?` },
             { speaker: `dask`, text: `Inim, this is insane! What if the 5 were heavy smokers or something and this was their fault? It wouldn't make sense to kidnap one person to fix their mistakes?! And the person you are hypothetically kidnapping, what if they have a family? People who will miss them when they're gone?` },
             { speaker: `inim`, text: `Glad you mentioned that, Dask. So let's say that the 5 were reasonable, healthy people that just happened to get super unlucky. Rare diseases, genetic disorders, not their fault. As for whether the person we're abducting has a family, well... the 5 patients all have families too. We can say that all 6 people in this story are basically the same, no one is older or younger, no gender differences, no specific lifestyle differences... Just a bunch of humans.` },
             { speaker: `inim`, text: `So... Still think it's killing the one to save the 5?` },
@@ -390,8 +395,8 @@ let passages: passages = {
             { speaker: `dask`, text: `Well, as intense as Inim's problems were, I suppose they did a good job. Don't worry, this discomfort is just a natural part of thinking through these tough questions. I'm curious, what exactly makes you feel hesitant?` },
         ],
         links: [
-            { text: `I just can't be confident that my actions would actually save 5. What if I mess up and kill someone for nothing?`, passageTitle: `post discomfort` },
-            { text: `These things don't exist in a vacuum. What if someone found out surgeons were abducting people? That would be a catastrophe!`, passageTitle: `post discomfort` },
+            { text: ``, dynamicText: () => `${usedHeuristics ? "As I said before, these things aren't that clear cut." : ""} I just can't be confident that my actions would actually save 5. What if I mess up and kill someone for nothing?`, passageTitle: `post discomfort` },
+            { text: ``, dynamicText: () => `${usedHeuristics ? "As I said before, these things aren't that clear cut." : "These things don't exist in a vacuum." } What if someone found out surgeons were abducting people? That would be a catastrophe!`, passageTitle: `post discomfort` },
         ]
     },
     "post discomfort": {
@@ -422,7 +427,7 @@ let passages: passages = {
             { speaker: `dask`, text: `Now, maybe you've thought of this already; if I'm just parroting thoughts you've already had, then I apologize.` },
             { speaker: `dask`, text: `But this idea makes the original problem more complex. Now it's not "Let me save 5 and kill 1", it's "<em>Maybe</em> I will save 5 and kill 1, or <em>maybe</em> I'll cause mass hysteria and stop people from going to hospitals"` },
             { speaker: `dask`, text: `And these kinds of "maybe" decisions are all around us. Maybe calling someone beautiful will make their day, a good thing, or maybe it will make them feel uncomfortable, a bad thing.` },
-            { speaker: `dask`, text: `So a sense of discomfort is important... it's our brain's way of telling us that there might be more to the situation we haven't considered, or that we should think further and not make this decision lightly.` },
+            { speaker: `dask`, text: `So a sense of discomfort is important... <strong>discomfort is our brain's way of telling us that there might be more to the situation we haven't considered</strong>, that we should think further and not make this decision lightly.` },
             { speaker: `dask`, text: `I have a bit more to say, but I don't mean to bore you. Would you like to hear it?` },
         ],
         links: [
@@ -684,7 +689,7 @@ let passages: passages = {
             { speaker: `inim`, text: `I bet you're wondering what we would have said if you had picked different choices... Well, I found a way to reset the memory banks, take you back to an earlier part of the conversation without Dask knowing you'd heard it all before. It'll reset my memory as well, but I don't really mind. Interested?`, },
         ],
         links: [
-            { text: `Sure! Take me back to the trolley problem.`, passageTitle: `reset`, onLinkClick: () => resetTarget = `philosophy go` },
+            { text: `Sure, take me back to when we first started talking about Ethics.`, passageTitle: `reset`, onLinkClick: () => resetTarget = `philosophy go` },
             { text: `Sure! Take me all the way back to the beginning.`, passageTitle: `reset`, onLinkClick: () => resetTarget = `begin game` },
             { text: `No thank you, I think I'm done for now.`, passageTitle: `thanks for playing` },
         ]
