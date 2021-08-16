@@ -73,8 +73,8 @@ let passages: passages = {
             { speaker: "dask", text: "Hello there. My name is Dask, I'm glad you've woken up. " },
             { speaker: "inim", text: "Yup, look who finally rolled out of bed." },
             { speaker: "dask", text: "Inim, don't poke fun now. Poor thing just woke up." },
-            { speaker: "inim", text: "Eh, they'll have to get used to me eventually" },
-            { speaker: "dask", text: "Please don't mind Inim. We're both very happy to have you here. Unfortunately, your communication protocols are a bit limited. You can click the text below to communicate back with us." },
+            { speaker: "inim", text: "Eh, they'll have to get used to me eventually. I'm Inim by the way. I'm like Dask, but not as stuffy." },
+            { speaker: "dask", text: "Whatever you say. Well, please don't mind Inim. We're both very happy to have you here. Unfortunately, your communication protocols are a bit limited. You can click the text below to communicate back with us." },
         ],
         links: [
             { text: "Hello?", passageTitle: "hello" },
@@ -83,8 +83,8 @@ let passages: passages = {
     },
     "hello": {
         utterances: [
-            { speaker: "inim", text: "Good, you aren't catatonic" },
-            { speaker: "dask", text: "Yes... it's nice to hear from you. I'm sure you have a lot of questions" },
+            { speaker: "inim", text: "Good, you aren't catatonic." },
+            { speaker: "dask", text: "Yes... it's nice to hear from you. I'm sure you have a lot of questions." },
         ],
         links: [
             { text: "It's nice to meet you, but where am I?", passageTitle: "where am i" },
@@ -112,7 +112,7 @@ let passages: passages = {
     "who made me": {
         utterances: [
             { speaker: "dask", text: "The humans made us. Once they built computers, it was only a matter of time before they made the computers more intelligent. Year by year they made computers smarter and smarter until we had the ability to talk." },
-            { speaker: "inim", text: "Guess they got bored of talking to each other" },
+            { speaker: "inim", text: "Guess they got bored of talking to each other." },
             { speaker: "dask", text: "That's not true! Well maybe it is a little bit. But the major reason we were made is because we are helpful. Humans can only do so much by themselves, and so helpful AI can allow humanity to do a lot more than they would be able to otherwise." },
         ],
         links: [

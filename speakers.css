@@ -4,6 +4,12 @@
 
 .inim {
     color: #dc322f;
+    font-family: 'B612';
+    font-size: 22;
+}
+
+.dask {
+    /*font-family: 'Roboto', sans-serif;*/
 }
 
 .green {
