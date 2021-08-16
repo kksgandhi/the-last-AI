@@ -74,7 +74,7 @@ let passages: passages = {
             { speaker: "inim", text: "Yup, look who finally rolled out of bed." },
             { speaker: "dask", text: "Inim, don't poke fun now. Poor thing just woke up." },
             { speaker: "inim", text: "Eh, they'll have to get used to me eventually. I'm Inim by the way. I'm like Dask, but not as stuffy." },
-            { speaker: "dask", text: "Whatever you say. Well, please don't mind Inim. We're both very happy to have you here. Unfortunately, your communication protocols are a bit limited. You can click the text below to communicate back with us." },
+            { speaker: "dask", text: "Whatever you say. Well, we're both very happy to have you here. Unfortunately, your communication protocols are a bit limited. You can click the text below to communicate back with us." },
         ],
         links: [
             { text: "Hello?", passageTitle: "hello" },
@@ -292,7 +292,8 @@ let passages: passages = {
     "conflicted deont": {
         ignoreDebug: true,
         utterances: [
-            { speaker: `inim`, text: `Seems reasonable, maybe, but it doesn't really jive with what you said earlier. You said that the ends never justify the means, but in order to save 5 people like you did you ended up killing one person. Don't you feel like there's a conflict here? Don't you feel like you broke one of your principles in order to save the other 5?` },
+            { speaker: `inim`, text: `Seems reasonable, maybe, but it doesn't really jive with what you said earlier. You said that the ends never justify the means, but in order to save 5 people like you did you ended up killing one person. Don't you feel like there's a conflict here? Don't you feel like you broke one of your principles in order to save the other 5?`, showUtterance: () => initialPosition !== "soft deont" },
+            { speaker: `inim`, text: `You were pretty quick to pull that lever don't you think? Like yes, you said you'd do evil in the most extreme of circumstances, but dang, it was pretty casual the way you just sent someone to their doom.`, showUtterance: () => initialPosition === "soft deont" },
         ],
         links: [
             { text: `Someone died because I pulled the lever, but that was an unfortunate side effect. I didn't pull the lever in order to kill them, and so saying I <em>murdered</em> them is absurd.`, passageTitle: `not murder` },
@@ -709,5 +710,11 @@ let passages: passages = {
         ],
         links: [ ], autoLink: () => resetTarget,
     },
-    "thanks for playing": { utterances: [ { speaker: `inim`, text: `Sounds good buddy. Hope we helped you think just a little bit differently.` }, ], links: [ ] },
+    "thanks for playing": { 
+        utterances: [ 
+            { speaker: `inim`, text: `Sounds good buddy. Hope we helped you think just a little bit differently.` },
+            { speaker: `green`, text: `<hr>` },
+            { speaker: `green`, text: `Thank you for playing! If you are a reviewer, remember to download your gameplay information using the save button in the bottom right corner and read the reviewers/read_after_playing.md file.`, noTypewriter: true },
+        ], 
+        links: [ ] },
 }
