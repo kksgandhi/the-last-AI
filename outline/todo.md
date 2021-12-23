@@ -1,3 +1,17 @@
+From seminar meeting
+--------------------
+
+ - Spider Man has a dash in it and should be capitalized
+ - Overscroll, disable autoscroll
+ - add tap to continue, think about autoscrolling
+ - george break down into a series of binary choices
+ - part task and narrowing scope
+ - Nathan - roleplay, play it up even more. Play the role of the AI that has pre-existing knowledge
+ - close play other philosophy games
+ - Drop the pretense? Lower the stakes or have you be one voter in the group
+ - You're not the AI, but you're training the AI.
+ - Add CHAPTER numbers
+
 General Todo
 ------------
 
