@@ -288,7 +288,7 @@ const downloadToFile = (content: string, filename: string, contentType: string) 
     URL.revokeObjectURL(a.href);
 };
 
-window.onbeforeunload = () => existsUnsavedInfo ? "Unsaved Information, please save" : null;
+if (saveIcon) window.onbeforeunload = () => existsUnsavedInfo ? "Unsaved Information, please save" : null;
 
 document.addEventListener('keydown', event => { if (event.key === " ") delay = 0; });
 document.addEventListener('keyup', event => { if (event.key === " ") setDelayToSliderVal(); });
