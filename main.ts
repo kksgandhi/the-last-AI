@@ -270,11 +270,12 @@ if (defaultColorScheme === "light") swapColorScheme();
 
 document.title = title;
 
-let saveIcon = document.getElementById("saveIcon")!;
-saveIcon.onclick = () => {
-    downloadToFile(saveInfo, "last-AI-progress.txt", "text/plain");
-    existsUnsavedInfo = false;
-};
+let saveIcon = document.getElementById("saveIcon");
+if (saveIcon)
+    saveIcon!.onclick = () => {
+        downloadToFile(saveInfo, "last-AI-progress.txt", "text/plain");
+        existsUnsavedInfo = false;
+    };
 
 const downloadToFile = (content: string, filename: string, contentType: string) => {
     const a = document.createElement('a');

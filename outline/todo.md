@@ -1,3 +1,8 @@
+Technical
+---------
+
+ - add config option for save button
+
 From seminar meeting
 --------------------
 
